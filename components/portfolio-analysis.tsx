@@ -24,6 +24,14 @@ const PortfolioAnalysis = () => {
 
   console.log(portfolioSummary);
 
+  if (!listings.length) {
+    return (
+      <div className="text-center mt-12 text-xl text-gray-300">
+        Add your stock listings to see dashboard
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 lg:p-8">
       <div className="ml-5 lg:ml-24">
