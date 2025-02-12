@@ -1,8 +1,9 @@
 "use client";
-import useClickOutside from "@/hooks/useClickOutside";
+import useClickOutside from "@/hooks/use-click-outside";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { ArrowLeftIcon, Plus } from "lucide-react";
 import { useRef, useState, useEffect, useId } from "react";
+import { Input } from "./input";
 
 const TRANSITION = {
   type: "spring",
@@ -14,16 +15,15 @@ export default function TickerWeightInputPopover() {
   const uniqueId = useId();
   const formContainerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [note, setNote] = useState<null | string>(null);
+  const [ticker, setTicker] = useState("");
+  const [shares, setShares] = useState(0);
 
   const openMenu = () => {
     setIsOpen(true);
   };
 
   const closeMenu = () => {
-    console.log(note);
     setIsOpen(false);
-    setNote(null);
   };
 
   useClickOutside(formContainerRef, () => {
@@ -78,27 +78,30 @@ export default function TickerWeightInputPopover() {
               }}
             >
               <form
-                className="flex h-full flex-col"
+                className="flex h-full flex-col p-4"
                 onSubmit={(e) => {
                   e.preventDefault();
                 }}
               >
-                <motion.span
-                  layoutId={`popover-label-${uniqueId}`}
-                  aria-hidden="true"
-                  style={{
-                    opacity: note ? 0 : 1,
-                  }}
-                  className="absolute left-4 top-3 select-none text-sm text-zinc-500 dark:text-zinc-400"
+                <div className="flex flex-col gap-4">
+                  <Input
+                    placeholder="Ticker"
+                    required
+                    value={ticker}
+                    onChange={(e) => setTicker(e.target.value)}
+                  />
+                  <Input
+                    placeholder="Shares"
+                    type="number"
+                    min="1"
+                    required
+                    onChange={(e) => setShares(parseInt(e.target.value))}
+                  />
+                </div>
+                <div
+                  key="close"
+                  className="flex justify-between px-4 py-3 mt-auto"
                 >
-                  Add
-                </motion.span>
-                <textarea
-                  className="h-full w-full resize-none rounded-md bg-transparent px-4 py-3 text-sm outline-hidden focus:outline-none"
-                  autoFocus
-                  onChange={(e) => setNote(e.target.value)}
-                />
-                <div key="close" className="flex justify-between px-4 py-3">
                   <button
                     type="button"
                     className="flex items-center"
@@ -110,12 +113,12 @@ export default function TickerWeightInputPopover() {
                   <button
                     className="relative ml-1 flex h-8 shrink-0 scale-100 select-none appearance-none items-center justify-center rounded-lg border bg-transparent px-2 text-sm text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-800 focus-visible:ring-2 active:scale-[0.98] dark:border-zinc-50/10 dark:text-zinc-50 dark:hover:bg-zinc-800"
                     type="submit"
-                    aria-label="Submit note"
+                    aria-label="Add to listing"
                     onClick={() => {
                       closeMenu();
                     }}
                   >
-                    Submit Note
+                    Add to listing
                   </button>
                 </div>
               </form>

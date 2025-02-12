@@ -1,12 +1,12 @@
 import React from "react";
-import TickerWeightInput from "./ticker-weight-input";
+import TickerWeight from "./ticker-weight";
 
 const Hero = () => {
   return (
     <div>
       <section>
         <div className="rounded-full bg-white text-gray-400 font-semibold max-w-max mx-auto text-xs text-center py-1 px-4 mb-4">
-          Part of an application for{" "}
+          Part of a job application for{" "}
           <a
             className="cursor-pointer text-gray-500"
             href="https://finchat.io"
@@ -29,7 +29,7 @@ const Hero = () => {
           </a>
         </div>
       </section>
-      <TickerWeightInput />
+      <TickerWeight />
     </div>
   );
 };
