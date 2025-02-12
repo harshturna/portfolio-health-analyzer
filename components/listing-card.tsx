@@ -26,7 +26,7 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
                   <img src={listing.logoUrl} width={30} height={30} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold">
+                  <h3 className="text-xs sm:text-sm font-semibold">
                     {listing.name}{" "}
                     <span className="text-gray-400 font-light text-xs ml-1">
                       ({listing.userShares}{" "}
@@ -43,7 +43,7 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
                 </div>
               </div>
             </DisclosureTrigger>
-            <DisclosureContent className="w-[330px] ml-12">
+            <DisclosureContent className="w-[300px] sm-w-[350px] ml-12">
               <h2 className="mt-4 mb-2 font-semibold text-lg">Statistics</h2>
               <ul className="listing-stats">
                 <li>
