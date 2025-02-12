@@ -17,7 +17,7 @@ const HoldingCard = ({
     <div className="w-full md:w-[40%] lg:w-[32%] h-[200px] rounded-lg bg-white p-8 aspect">
       <div className="h-12">{holding}</div>
       <div className="my-2">
-        <h2 className="text-2xl lg:text-4xl font-medium">
+        <h2 className="text-2xl lg:text-3xl font-medium">
           <span
             className={`${
               variant === "success"

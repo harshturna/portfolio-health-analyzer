@@ -57,7 +57,9 @@ const PortfolioAnalysis = () => {
               variant="success"
             />
             <HoldingCard
-              value={portfolioSummary.riskiestPosition.beta.toFixed(3)}
+              value={`${portfolioSummary.riskiestPosition.beta.toFixed(
+                3
+              )} (Beta)`}
               description="Riskiest Position"
               holding={portfolioSummary.riskiestPosition.ticker}
               variant="error"

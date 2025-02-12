@@ -14,7 +14,7 @@ const ValueCard = ({ value, description, icon: Icon }: ValueCardProps) => {
         <Icon className="text-green-500" />
       </div>
       <div className="my-2">
-        <h2 className="text-2xl lg:text-4xl font-medium">
+        <h2 className="text-2xl lg:text-3xl font-medium">
           <span>{value}</span>
         </h2>
       </div>
