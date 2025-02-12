@@ -55,7 +55,7 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
                 <li>
                   <span>Year Return</span>
                   <span>
-                    {listing.metrics["52WeekPriceReturnDaily"].toFixed(3)}%
+                    {listing.metrics["52WeekPriceReturnDaily"].toFixed(2)}%
                   </span>
                 </li>
                 <li>
