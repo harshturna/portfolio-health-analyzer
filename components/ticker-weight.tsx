@@ -9,19 +9,11 @@ const TickerWeight = () => {
 
   return (
     <div>
-      <h2 className="mt-12 mb-6 text-xl md:text-2xl text-center font-medium">
+      <h2 className="mt-12 mb-6 text-lg sm:text-xl md:text-2xl text-center font-medium">
         Add your portfolio listings
       </h2>
       {listings.map((listing) => (
-        <ListingCard
-          key={listing.ticker}
-          ticker={listing.ticker}
-          name={listing.name}
-          industry={listing.industry}
-          logoUrl={listing.logoUrl}
-          exchange={listing.exchange}
-          shares={listing.userShares}
-        />
+        <ListingCard key={listing.ticker} listing={listing} />
       ))}
       <TickerWeightInput />
     </div>

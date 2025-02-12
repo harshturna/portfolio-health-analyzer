@@ -15,8 +15,8 @@ const Hero = () => {
             FinChat
           </a>
         </div>
-        <h1 className="text-3xl font-semibold md:text-6xl">
-          Portfolio Risk Analyzer
+        <h1 className="text-3xl font-semibold md:text-6xl text-center">
+          Portfolio Health Analyzer
         </h1>
         <div className="font-medium text-right">
           by{" "}

@@ -3,9 +3,9 @@ import useClickOutside from "@/hooks/use-click-outside";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { ArrowLeftIcon, Plus } from "lucide-react";
 import { useRef, useState, useEffect, useId } from "react";
-import { Input } from "./input";
+import { Input } from "./ui/input";
 import { useListings } from "@/store/use-listings";
-import { Label } from "./label";
+import { Label } from "./ui/label";
 
 const TRANSITION = {
   type: "spring",

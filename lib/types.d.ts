@@ -21,3 +21,9 @@ interface Listing {
     };
   };
 }
+
+interface RiskCardProps {
+  riskLevel: "Low" | "Moderate" | "High";
+  riskScore: number;
+  riskFactors: string[];
+}
