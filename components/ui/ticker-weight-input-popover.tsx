@@ -4,6 +4,8 @@ import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { ArrowLeftIcon, Plus } from "lucide-react";
 import { useRef, useState, useEffect, useId } from "react";
 import { Input } from "./input";
+import { useListings } from "@/store/use-listings";
+import { Label } from "./label";
 
 const TRANSITION = {
   type: "spring",
@@ -11,18 +13,84 @@ const TRANSITION = {
   duration: 0.3,
 };
 
+interface ListingResponse {
+  success: boolean;
+  type: "client" | "server";
+  message?: string;
+  data?: Listing;
+}
+
 export default function TickerWeightInputPopover() {
   const uniqueId = useId();
   const formContainerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [ticker, setTicker] = useState("");
-  const [shares, setShares] = useState(0);
+  const [shares, setShares] = useState<number>(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const addListing = useListings((store) => store.addListing);
+  const listing = useListings((store) => store.listings);
 
   const openMenu = () => {
     setIsOpen(true);
   };
 
+  const handleSubmit = async () => {
+    if (!ticker) {
+      setError("Missing ticker");
+      return;
+    }
+
+    if (!shares) {
+      setError("Missing shares");
+      return;
+    }
+
+    const isExisting = listing.some((listing) => listing.ticker === ticker);
+
+    if (isExisting) {
+      setError("Listing already added");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError("");
+
+      const resp = await fetch("/api/listing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ticker, shares }),
+      });
+
+      let data: ListingResponse;
+
+      try {
+        data = await resp.json();
+      } catch (jsonError) {
+        throw new Error("Invalid JSON response from server");
+      }
+
+      if (!resp.ok || !data.success || !data.data) {
+        throw new Error(data.message || "Unknown error occurred");
+      }
+      addListing(data.data);
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Error adding listing:", error);
+      setError(error instanceof Error ? error.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+      setShares(1);
+      setTicker("");
+    }
+  };
+
   const closeMenu = () => {
+    setTicker("");
+    setLoading(false);
+    setError("");
+    setShares(1);
     setIsOpen(false);
   };
 
@@ -72,7 +140,7 @@ export default function TickerWeightInputPopover() {
             <motion.div
               ref={formContainerRef}
               layoutId={`popover-${uniqueId}`}
-              className="absolute h-[200px] w-[364px] overflow-hidden border bg-background outline-hidden"
+              className="absolute h-[280px] w-[364px] overflow-hidden border bg-background outline-hidden"
               style={{
                 borderRadius: 12,
               }}
@@ -84,20 +152,36 @@ export default function TickerWeightInputPopover() {
                 }}
               >
                 <div className="flex flex-col gap-4">
-                  <Input
-                    placeholder="Ticker"
-                    required
-                    value={ticker}
-                    onChange={(e) => setTicker(e.target.value)}
-                  />
-                  <Input
-                    placeholder="Shares"
-                    type="number"
-                    min="1"
-                    required
-                    onChange={(e) => setShares(parseInt(e.target.value))}
-                  />
+                  <div>
+                    <Label htmlFor="ticker-input" className="mb-1">
+                      Ticker
+                    </Label>
+                    <Input
+                      id="ticker-input"
+                      placeholder="AAPL"
+                      required
+                      value={ticker}
+                      onChange={(e) => setTicker(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="shares-input" className="mb-1">
+                      Shares
+                    </Label>
+                    <Input
+                      id="shares-input"
+                      placeholder="1"
+                      type="number"
+                      min="1"
+                      required
+                      value={shares}
+                      onChange={(e) => setShares(parseInt(e.target.value))}
+                    />
+                  </div>
                 </div>
+                {error ? (
+                  <div className="text-xs text-red-500 mt-2">{error}</div>
+                ) : null}
                 <div
                   key="close"
                   className="flex justify-between px-4 py-3 mt-auto"
@@ -111,14 +195,15 @@ export default function TickerWeightInputPopover() {
                     <ArrowLeftIcon size={16} className="text-zinc-900" />
                   </button>
                   <button
+                    disabled={loading}
                     className="relative ml-1 flex h-8 shrink-0 scale-100 select-none appearance-none items-center justify-center rounded-lg border bg-transparent px-2 text-sm text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-800 focus-visible:ring-2 active:scale-[0.98] dark:border-zinc-50/10 dark:text-zinc-50 dark:hover:bg-zinc-800"
                     type="submit"
                     aria-label="Add to listing"
                     onClick={() => {
-                      closeMenu();
+                      handleSubmit();
                     }}
                   >
-                    Add to listing
+                    {loading ? "Adding listing..." : "Add to listing"}
                   </button>
                 </div>
               </form>

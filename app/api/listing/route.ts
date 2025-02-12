@@ -1,4 +1,9 @@
+import { isObjectEmpty } from "@/lib/utils";
 import { NextResponse } from "next/server";
+
+export async function GET() {
+  return new NextResponse("hello");
+}
 
 export async function POST(req: Request) {
   try {
@@ -46,6 +51,17 @@ export async function POST(req: Request) {
       profileResponse.json(),
       financialResponse.json(),
     ]);
+
+    if (isObjectEmpty(profileData) || isObjectEmpty(financialData)) {
+      return NextResponse.json(
+        {
+          success: false,
+          type: "client",
+          message: "Invalid ticker",
+        },
+        { status: 400 }
+      );
+    }
 
     const listingData: Listing = {
       name: profileData.name || "",
