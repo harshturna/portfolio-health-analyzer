@@ -43,7 +43,7 @@ const RiskScoreChart = ({
       <CardHeader className="items-center pb-0">
         <CardTitle>Risk Score</CardTitle>
         <CardDescription>
-          A composite measure of your portfolio's risk level
+          A composite measure of your portfolio&apos;s risk level
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-1 items-center pb-0">

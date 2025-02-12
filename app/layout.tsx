@@ -13,7 +13,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio Risk Analyzer",
+  title: "Portfolio Health Analyzer",
   description: "part of application for FinChat",
 };
 

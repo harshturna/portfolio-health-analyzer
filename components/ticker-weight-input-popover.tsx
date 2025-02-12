@@ -67,7 +67,7 @@ export default function TickerWeightInputPopover() {
 
       try {
         data = await resp.json();
-      } catch (jsonError) {
+      } catch {
         throw new Error("Invalid JSON response from server");
       }
 

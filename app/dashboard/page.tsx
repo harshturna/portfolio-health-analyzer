@@ -1,11 +1,12 @@
-import PortfolioAnalysis from "@/components/portfolio-analysis";
+"use client";
 
-const Dashboard = () => {
-  return (
-    <div>
-      <PortfolioAnalysis />
-    </div>
-  );
-};
+import dynamic from "next/dynamic";
 
-export default Dashboard;
+const DynamicPortfolioAnalysis = dynamic(
+  () => import("@/components/portfolio-analysis"),
+  { ssr: false }
+);
+
+export default function Dashboard() {
+  return <DynamicPortfolioAnalysis />;
+}

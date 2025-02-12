@@ -1,6 +1,4 @@
 import React from "react";
-import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { LucideIcon, Star } from "lucide-react";
 
 interface HoldingCardProps {
   value: string;
