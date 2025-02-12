@@ -16,14 +16,6 @@ import NavTabs from "./ui/nav-tabs";
 const PortfolioAnalysis = () => {
   const listings = useListings((store) => store.listings);
 
-  const { riskFactors, riskLevel, riskScore } =
-    calculatePortfolioRiskLevel(listings);
-
-  const portfolioSummary = generatePortfolioSummary(listings);
-  generatePortfolioSummary(listings);
-
-  console.log(portfolioSummary);
-
   if (!listings.length) {
     return (
       <div className="text-center mt-12 text-xl text-gray-300">
@@ -31,6 +23,14 @@ const PortfolioAnalysis = () => {
       </div>
     );
   }
+
+  const { riskFactors, riskLevel, riskScore } =
+    calculatePortfolioRiskLevel(listings);
+
+  const portfolioSummary = generatePortfolioSummary(listings);
+  generatePortfolioSummary(listings);
+
+  console.log(portfolioSummary);
 
   return (
     <div className="p-4 lg:p-8">
