@@ -11,6 +11,7 @@ import { ChartNoAxesColumnIncreasing } from "lucide-react";
 import MetricsCard from "./ui/metrics-card";
 import HoldingCard from "./ui/holding-card";
 import SectorAllocationChart from "./sector-allocation-chart";
+import NavTabs from "./ui/nav-tabs";
 
 const PortfolioAnalysis = () => {
   const listings = useListings((store) => store.listings);
@@ -25,6 +26,9 @@ const PortfolioAnalysis = () => {
 
   return (
     <div className="p-4 lg:p-8">
+      <div className="ml-5 lg:ml-24">
+        <NavTabs />
+      </div>
       <div className="flex-col lg:flex-row p-4 lg:p-8 pb-4 flex gap-4 flex-wrap justify-center">
         <div className="w-full lg:w-[30%]">
           <RiskScoreChart
