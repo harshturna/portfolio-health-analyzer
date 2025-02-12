@@ -19,7 +19,7 @@ const PortfolioAnalysis = () => {
   if (!listings.length) {
     return (
       <div className="text-center text-xl text-gray-400 flex items-center justify-center h-full w-full">
-        Add your stock listings to see dashboard
+        Add your portfolio listings to see dashboard
       </div>
     );
   }
