@@ -1,10 +1,6 @@
 import { isObjectEmpty } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
-export async function GET() {
-  return new NextResponse("hello");
-}
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
