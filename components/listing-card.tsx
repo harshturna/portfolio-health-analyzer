@@ -44,7 +44,7 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
               </div>
             </DisclosureTrigger>
             <DisclosureContent className="w-[300px] sm-w-[350px] ml-1 sm:ml-4 md:ml-12">
-              <h2 className="mt-4 mb-2 font-semibold text-md sm:text-lg">
+              <h2 className="pt-4 mb-2 font-semibold text-md sm:text-lg">
                 Statistics
               </h2>
               <ul className="listing-stats">
