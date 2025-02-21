@@ -21,7 +21,7 @@ const PortfolioAnalysis = () => {
   const navTabs = [
     {
       name: "Home",
-      link: "/home",
+      link: "/",
     },
     {
       name: "Dashboard",
