@@ -1,25 +1,22 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
-export function isObjectEmpty(obj: object) {
+export const isObjectEmpty = (obj: object) => {
   for (const prop in obj) {
     if (obj.hasOwnProperty(prop)) {
       return false;
     }
   }
   return true;
-}
+};
 
 /**
  * Calculate current stock price from market cap and shares outstanding
  */
-export const calculateCurrentPrice = (listing: Listing): number => {
-  return listing.marketCapitalization / listing.shareOutstanding;
-};
+export const calculateCurrentPrice = (listing: Listing): number =>
+  listing.marketCapitalization / listing.shareOutstanding;
 
 /**
  * Calculate total value of a stock position
@@ -202,7 +199,7 @@ export const generatePortfolioSummary = (listings: Listing[]) => {
  */
 export const calculatePortfolioRiskLevel = (
   listings: Listing[]
-): RiskCardProps => {
+): RiskSummary => {
   const riskMetrics = calculatePortfolioRiskMetrics(listings);
   const sectorDiversity = analyzeSectorDiversification(listings);
 

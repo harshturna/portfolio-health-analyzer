@@ -22,8 +22,16 @@ interface Listing {
   };
 }
 
-interface RiskCardProps {
-  riskLevel: "Low" | "Moderate" | "High";
+interface StatisticItem {
+  key: string;
+  name: string;
+  getValue: (listing: Listing) => number | string;
+}
+
+type RiskLevel = "Low" | "Moderate" | "High";
+
+interface RiskSummary {
+  riskLevel: RiskLevel;
   riskScore: number;
   riskFactors: string[];
 }

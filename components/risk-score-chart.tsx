@@ -11,11 +11,7 @@ import {
 const riskColors = ["#22c55e", "#facc15", "#ef4444"];
 const MAX_VALUE = 8;
 
-const RiskScoreChart = ({
-  riskFactors,
-  riskLevel,
-  riskScore,
-}: RiskCardProps) => {
+const RiskScoreChart = ({ riskFactors, riskLevel, riskScore }: RiskSummary) => {
   const riskColor =
     riskScore <= 2
       ? riskColors[0]

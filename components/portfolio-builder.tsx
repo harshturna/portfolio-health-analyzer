@@ -1,11 +1,12 @@
 "use client";
 
-import { useListings } from "@/store/use-listings";
-import ListingCard from "./listing-card";
-import TickerWeightInput from "./ticker-weight-input";
 import { useRouter } from "next/navigation";
 
-const TickerWeight = () => {
+import { useListings } from "@/store/use-listings";
+import ListingCard from "@/components/listing-card";
+import AddHoldingPopover from "@/components/add-holding-popover";
+
+const PortfolioBuilder = () => {
   const listings = useListings((store) => store.listings);
   const router = useRouter();
 
@@ -17,7 +18,7 @@ const TickerWeight = () => {
       {listings.map((listing) => (
         <ListingCard key={listing.ticker} listing={listing} />
       ))}
-      <TickerWeightInput />
+      <AddHoldingPopover />
       <div className="flex items-center justify-center">
         <button
           disabled={!listings.length}
@@ -31,4 +32,4 @@ const TickerWeight = () => {
   );
 };
 
-export default TickerWeight;
+export default PortfolioBuilder;

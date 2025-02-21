@@ -1,11 +1,12 @@
 "use client";
-import useClickOutside from "@/hooks/use-click-outside";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { ArrowLeftIcon, Plus } from "lucide-react";
 import { useRef, useState, useEffect, useId } from "react";
-import { Input } from "./ui/input";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useListings } from "@/store/use-listings";
-import { Label } from "./ui/label";
+import useClickOutside from "@/hooks/use-click-outside";
 
 const TRANSITION = {
   type: "spring",
@@ -20,7 +21,7 @@ interface ListingResponse {
   data?: Listing;
 }
 
-export default function TickerWeightInputPopover() {
+const AddHoldingPopover = () => {
   const uniqueId = useId();
   const formContainerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -213,4 +214,6 @@ export default function TickerWeightInputPopover() {
       </div>
     </MotionConfig>
   );
-}
+};
+
+export default AddHoldingPopover;

@@ -1,16 +1,16 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { X } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { useListings } from "@/store/use-listings";
+import { LISTING_STATISTICS } from "@/lib/constants";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Disclosure,
   DisclosureContent,
   DisclosureTrigger,
 } from "@/components/ui/disclosure";
-import { calculatePositionRiskLevel } from "@/lib/utils";
-import { X } from "lucide-react";
-import { Button } from "./ui/button";
-import { useListings } from "@/store/use-listings";
 
 const ListingCard = ({ listing }: { listing: Listing }) => {
   const deleteListing = useListings((state) => state.deleteListing);
@@ -23,7 +23,12 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
             <DisclosureTrigger>
               <div className="flex items-center gap-4 justify-center">
                 <div>
-                  <img src={listing.logoUrl} width={30} height={30} />
+                  <img
+                    src={listing.logoUrl}
+                    width={30}
+                    height={30}
+                    alt={listing.name}
+                  />
                 </div>
                 <div>
                   <h3 className="text-xs sm:text-sm font-semibold">
@@ -48,28 +53,18 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
                 Statistics
               </h2>
               <ul className="listing-stats">
-                <li>
-                  <span>Beta</span>
-                  <span>{listing.metrics.beta}</span>
-                </li>
-                <li>
-                  <span>Year Return</span>
-                  <span>
-                    {listing.metrics["52WeekPriceReturnDaily"].toFixed(2)}%
-                  </span>
-                </li>
-                <li>
-                  <span>Risk Level</span>
-                  <span>{calculatePositionRiskLevel(listing)}</span>
-                </li>
-                <li>
-                  <span>Annual High</span>
-                  <span>{listing.metrics["52WeekHigh"]}</span>
-                </li>
-                <li>
-                  <span>Annual Low</span>
-                  <span>{listing.metrics["52WeekLow"]}</span>
-                </li>
+                {LISTING_STATISTICS.map((stat) => {
+                  const value = stat.getValue(listing);
+
+                  return (
+                    <li key={stat.key}>
+                      <span>{stat.name}</span>
+                      <span>
+                        {typeof value === "number" ? value.toFixed(2) : value}
+                      </span>
+                    </li>
+                  );
+                })}
               </ul>
             </DisclosureContent>
           </Disclosure>

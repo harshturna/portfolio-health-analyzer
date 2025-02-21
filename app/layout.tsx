@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Plus_Jakarta_Sans } from "next/font/google";
-import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
+
+import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -15,7 +16,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "Portfolio Health Analyzer",
-  description: "part of application for FinChat",
+  description: "part of a job application for FinChat",
 };
 
 export default function RootLayout({
