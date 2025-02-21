@@ -12,6 +12,23 @@ export const isObjectEmpty = (obj: object) => {
   return true;
 };
 
+export function injectValuesIntoPrompt(
+  promptTemplate: string,
+  values: Record<string, string | number>
+): string {
+  return Object.entries(values).reduce((prompt, [key, value]) => {
+    const placeholder = new RegExp(`\\{{${key}\\}}`, "g");
+    return prompt.replace(placeholder, String(value));
+  }, promptTemplate);
+}
+
+export function addUserQuestion(
+  promptTemplate: string,
+  userQuestion: string
+): string {
+  return injectValuesIntoPrompt(promptTemplate, { userQuestion });
+}
+
 /**
  * Calculate current stock price from market cap and shares outstanding
  */

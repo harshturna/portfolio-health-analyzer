@@ -48,3 +48,15 @@ interface RiskSummary {
   riskScore: number;
   riskFactors: string[];
 }
+
+interface QueryAnalysisResult {
+  queryType:
+    | "TRANSCRIPT_SUMMARY"
+    | "EXECUTIVE_STATEMENTS"
+    | "METRIC_LOOKUP"
+    | "TREND_ANALYSIS"
+    | "COMPARISON_QUERY"
+    | "COMBINED_QUERY";
+  confidenceScore: number;
+  clarifyQuestion: string;
+}
