@@ -1,20 +1,33 @@
 "use client";
 
-import RiskScoreChart from "./risk-score-chart";
+import { ChartNoAxesColumnIncreasing } from "lucide-react";
+
+import { METRICS } from "@/lib/constants";
+import NavTabs from "@/components/ui/nav-tabs";
+import { useListings } from "@/store/use-listings";
+import ValueCard from "@/components/value-card";
+import HoldingCard from "@/components/holding-card";
+import MetricsCard from "@/components/metrics-card";
+import RiskScoreChart from "@/components/risk-score-chart";
+import SectorAllocationChart from "./sector-allocation-chart";
 import {
   calculatePortfolioRiskLevel,
   generatePortfolioSummary,
 } from "@/lib/utils";
-import { useListings } from "@/store/use-listings";
-import ValueCard from "./ui/value-card";
-import { ChartNoAxesColumnIncreasing } from "lucide-react";
-import MetricsCard from "./ui/metrics-card";
-import HoldingCard from "./ui/holding-card";
-import SectorAllocationChart from "./sector-allocation-chart";
-import NavTabs from "./ui/nav-tabs";
 
 const PortfolioAnalysis = () => {
   const listings = useListings((store) => store.listings);
+
+  const navTabs = [
+    {
+      name: "Home",
+      link: "/home",
+    },
+    {
+      name: "Dashboard",
+      link: "/dashboard",
+    },
+  ];
 
   if (!listings.length) {
     return (
@@ -28,14 +41,11 @@ const PortfolioAnalysis = () => {
     calculatePortfolioRiskLevel(listings);
 
   const portfolioSummary = generatePortfolioSummary(listings);
-  generatePortfolioSummary(listings);
-
-  console.log(portfolioSummary);
 
   return (
     <div className="p-4 lg:p-8">
       <div className="ml-5 lg:ml-24">
-        <NavTabs />
+        <NavTabs tabs={navTabs} />
       </div>
       <div className="flex-col lg:flex-row p-4 lg:p-8 pb-4 flex gap-4 flex-wrap justify-center">
         <div className="w-full lg:w-[30%]">
@@ -75,14 +85,10 @@ const PortfolioAnalysis = () => {
           </div>
           <div>
             <MetricsCard
-              beta={portfolioSummary.portfolioMetrics.portfolioBeta.toFixed(3)}
-              netMargin={`${(
-                portfolioSummary.portfolioMetrics.portfolioNetMargin * 100
-              ).toFixed(2)}%`}
-              volatility={`${portfolioSummary.portfolioMetrics.portfolioVolatility.toFixed(
-                3
-              )}`}
-              totalHoldings={`${portfolioSummary.numberOfHoldings}`}
+              metrics={METRICS.map((metric) => ({
+                name: metric.name,
+                value: metric.getValue(portfolioSummary.portfolioMetrics),
+              }))}
             />
           </div>
         </div>

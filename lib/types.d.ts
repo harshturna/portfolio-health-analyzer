@@ -22,6 +22,12 @@ interface Listing {
   };
 }
 
+interface MetricItem {
+  key: string;
+  name: string;
+  getValue: (metrics: RiskMetrics) => string;
+}
+
 interface StatisticItem {
   key: string;
   name: string;
@@ -29,6 +35,13 @@ interface StatisticItem {
 }
 
 type RiskLevel = "Low" | "Moderate" | "High";
+
+interface RiskMetrics {
+  portfolioBeta: number;
+  portfolioVolatility: number;
+  portfolioNetMargin: number;
+  numberOfHoldings: number;
+}
 
 interface RiskSummary {
   riskLevel: RiskLevel;

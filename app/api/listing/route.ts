@@ -1,5 +1,6 @@
-import { isObjectEmpty } from "@/lib/utils";
 import { NextResponse } from "next/server";
+
+import { isObjectEmpty } from "@/lib/utils";
 
 export async function POST(req: Request) {
   try {

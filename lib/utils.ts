@@ -55,7 +55,9 @@ export const calculatePortfolioAllocations = (
  * - Portfolio volatility using 52 week ranges
  * - Average net margin weighted by position size
  */
-export const calculatePortfolioRiskMetrics = (listings: Listing[]) => {
+export const calculatePortfolioRiskMetrics = (
+  listings: Listing[]
+): RiskMetrics => {
   const allocations = calculatePortfolioAllocations(listings);
 
   // Calculate weighted beta
@@ -83,6 +85,7 @@ export const calculatePortfolioRiskMetrics = (listings: Listing[]) => {
     portfolioBeta: weightedBeta,
     portfolioVolatility: volatility,
     portfolioNetMargin: weightedNetMargin,
+    numberOfHoldings: listings.length,
   };
 };
 

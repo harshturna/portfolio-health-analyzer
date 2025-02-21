@@ -1,5 +1,3 @@
-import React from "react";
-
 interface HoldingCardProps {
   value: string;
   description: string;

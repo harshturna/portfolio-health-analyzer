@@ -1,14 +1,33 @@
-import Link from "next/link";
+"use client";
 
-const NavTabs = () => {
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+interface NavTabsProps {
+  tabs: {
+    link: string;
+    name: string;
+  }[];
+}
+
+const NavTabs = ({ tabs }: NavTabsProps) => {
+  const pathname = usePathname();
+
   return (
     <div className="flex gap-1 text-sm">
-      <Link href="/" className="bg-gray-200 rounded-sm py-2 px-4">
-        Home
-      </Link>
-      <Link href="/dashboard" className="bg-white rounded-sm px-4 py-2">
-        Dashboard
-      </Link>
+      {tabs.map((tab) => (
+        <Link
+          key={tab.link}
+          href={tab.link}
+          className={cn(
+            pathname === tab.link ? "bg-white" : "bg-gray-200",
+            "py-2 px-4 rounded-sm"
+          )}
+        >
+          {tab.name}
+        </Link>
+      ))}
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Card,
   CardContent,
@@ -8,16 +7,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const riskColors = ["#22c55e", "#facc15", "#ef4444"];
+const RISK_COLORS = ["#22c55e", "#facc15", "#ef4444"];
 const MAX_VALUE = 8;
 
 const RiskScoreChart = ({ riskFactors, riskLevel, riskScore }: RiskSummary) => {
   const riskColor =
     riskScore <= 2
-      ? riskColors[0]
+      ? RISK_COLORS[0]
       : riskScore <= 5
-      ? riskColors[1]
-      : riskColors[2];
+      ? RISK_COLORS[1]
+      : RISK_COLORS[2];
 
   const size = 250;
   const strokeWidth = 30;

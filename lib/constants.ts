@@ -27,3 +27,26 @@ export const LISTING_STATISTICS: StatisticItem[] = [
     getValue: (listing) => listing.metrics["52WeekLow"],
   },
 ];
+
+export const METRICS: MetricItem[] = [
+  {
+    key: "beta",
+    name: "Beta",
+    getValue: (metrics) => metrics.portfolioBeta.toFixed(3),
+  },
+  {
+    key: "netMargin",
+    name: "Net Margin",
+    getValue: (metrics) => `${(metrics.portfolioNetMargin * 100).toFixed(2)}%`,
+  },
+  {
+    key: "volatility",
+    name: "Volatility",
+    getValue: (metrics) => metrics.portfolioVolatility.toFixed(3),
+  },
+  {
+    key: "totalHoldings",
+    name: "Total Holdings",
+    getValue: (metrics) => metrics.numberOfHoldings.toString(),
+  },
+];
