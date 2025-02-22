@@ -49,14 +49,21 @@ interface RiskSummary {
   riskFactors: string[];
 }
 
+type QueryType =
+  | "TRANSCRIPT_SUMMARY"
+  | "EXECUTIVE_STATEMENTS"
+  | "FINANCIAL_DATA_QUERY"
+  | "METRIC_ANALYSIS"
+  | "TRANSCRIPT_COMPARISON"
+  | "METRIC_COMPARISON";
+
 interface QueryAnalysisResult {
-  queryType:
-    | "TRANSCRIPT_SUMMARY"
-    | "EXECUTIVE_STATEMENTS"
-    | "FINANCIAL_DATA_QUERY"
-    | "METRIC_ANALYSIS"
-    | "TRANSCRIPT_COMPARISON"
-    | "METRIC_COMPARISON";
+  queryTypes: QueryType[];
   confidenceScore: number;
   clarifyQuestion: string;
 }
+
+type Messages = [
+  { role: "user" | "system"; content: string },
+  ...{ role: "user" | "system"; content: string }[]
+];

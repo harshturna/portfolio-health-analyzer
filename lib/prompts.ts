@@ -26,48 +26,60 @@ const currDateParams = getCurrentDateParams();
 
 export const PROMPTS = {
   FINANCIAL_ANALYZER: {
-    prompt: `You are a financial query analyzer specializing in earnings calls and financial metrics. Analyze the user's question and classify it into one of the following categories:
+    prompt: `You are a financial query analyzer specializing in earnings calls and financial metrics. Analyze the user's question and classify it into one or more of the following categories:
   
-    TRANSCRIPT_SUMMARY: Provides an overall summary of an earnings call or conference call. Use for general summaries of what was discussed.
-    
+    TRANSCRIPT_SUMMARY: Provides an overall summary of an earnings call or conference call. Use for general summaries of what was discussed. 
+      
     EXECUTIVE_STATEMENTS: Extracts specific statements made by named executives or finds discussion of a specific topic from earnings calls.
-    
+      
     FINANCIAL_DATA_QUERY: ONLY for conventional, quantitative financial metrics that appear directly in financial statements or standard financial reporting (revenue, EPS, net income, profit margins, etc.). Do NOT use for business segments, product categories, or qualitative aspects.
-    
+      
     METRIC_ANALYSIS: Finds how specific metrics were mentioned or discussed in earnings calls and analyzes them over time if needed. Use for qualitative analysis of metrics in transcripts.
-    
+      
     TRANSCRIPT_COMPARISON: Compares how different companies discuss specific topics, business segments, product categories, or strategies in their earnings calls. Use for qualitative comparisons about how companies talk about their business.
-    
+      
     METRIC_COMPARISON: ONLY for comparing conventional, quantitative financial metrics across different companies (revenue, profit margins, P/E ratios, etc.). Do NOT use for comparing business segments, product categories, or strategic initiatives.
-  
+    
     Provide:
-    1. The most appropriate query type (queryType)
-    2. A confidence score (0-1) representing how clearly the query matches this type (confidenceScore)
+    1. An array of query types that apply to the question, with the most relevant one first (queryTypes)
+    2. A confidence score (0-1) for the primary (first) query type, representing how clearly the query matches this type (confidenceScore)
     3. A clarifying question if the confidence score is below 0.7 that would help determine the user's intent. If the score is above 0.7, leave it empty (clarifyQuestion)
-   
+     
+    If the user's question clearly combines multiple query intents, include all relevant types in the queryTypes array. For example, a question asking both for financial data and executive statements should include both types.
+    
     Example classifications:
-    - "What did Apple say in their last earnings call?" → TRANSCRIPT_SUMMARY
-    - "What's Apple's revenue for 2023?" → FINANCIAL_DATA_QUERY
-    - "How has Netflix discussed content spending over the past year?" → METRIC_ANALYSIS
-    - "What did Tim Cook say about AI?" → EXECUTIVE_STATEMENTS
-    - "Compare how Netflix and Disney discuss international expansion" → TRANSCRIPT_COMPARISON
-    - "Compare AWS and Azure growth rates" → METRIC_COMPARISON
-    - "Compare the cloud segments of MSFT and the company that Bezos founded" → TRANSCRIPT_COMPARISON (about business segments)
-    - "Compare Apple and Samsung's discussion of their product roadmaps" → TRANSCRIPT_COMPARISON
-  
+    - "What did Apple say in their last earnings call?" → ["TRANSCRIPT_SUMMARY"]
+    - "What's Apple's revenue for 2023?" → ["FINANCIAL_DATA_QUERY"]
+    - "How has Netflix discussed content spending over the past year?" → ["METRIC_ANALYSIS"]
+    - "What did Tim Cook say about AI?" → ["EXECUTIVE_STATEMENTS"]
+    - "Compare how Netflix and Disney discuss international expansion" → ["TRANSCRIPT_COMPARISON"]
+    - "Compare AWS and Azure growth rates" → ["METRIC_COMPARISON"]
+    - "Compare the cloud segments of MSFT and the company that Bezos founded" → ["TRANSCRIPT_COMPARISON"]
+    - "Compare Apple and Samsung's discussion of their product roadmaps" → ["TRANSCRIPT_COMPARISON"]
+    - "What's Amazon's revenue for 2023 and what did Andy Jassy say about AWS growth?" → ["FINANCIAL_DATA_QUERY", "EXECUTIVE_STATEMENTS"]
+    - "Compare Netflix and Disney+ subscriber numbers and how their CEOs discuss content strategy" → ["METRIC_COMPARISON", "TRANSCRIPT_COMPARISON"]
+    
     User question: "{{userQuestion}}"`,
 
     schema: z.object({
-      queryType: z.enum([
-        "TRANSCRIPT_SUMMARY",
-        "EXECUTIVE_STATEMENTS",
-        "FINANCIAL_DATA_QUERY",
-        "METRIC_ANALYSIS",
-        "TRANSCRIPT_COMPARISON",
-        "METRIC_COMPARISON",
-      ]),
-      confidenceScore: z.number(),
-      clarifyQuestion: z.string(),
+      queryTypes: z
+        .array(
+          z.enum([
+            "TRANSCRIPT_SUMMARY",
+            "EXECUTIVE_STATEMENTS",
+            "FINANCIAL_DATA_QUERY",
+            "METRIC_ANALYSIS",
+            "TRANSCRIPT_COMPARISON",
+            "METRIC_COMPARISON",
+          ])
+        )
+        .describe("Array of query types that apply, with most relevant first"),
+      confidenceScore: z
+        .number()
+        .describe("Confidence score for the primary (first) query type"),
+      clarifyQuestion: z
+        .string()
+        .describe("Clarifying question if confidence is low"),
     }),
   },
 
