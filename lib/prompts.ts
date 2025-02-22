@@ -1,114 +1,20 @@
 import { z } from "zod";
-import { getCurrentDateParams } from "./utils";
 
-export const IncomeStatementMetrics = [
-  "revenue",
-  "gross profit",
-  "net income",
-  "operating income",
-  "eps",
-  "ebitda",
-  "profit margin",
-  "operating margin",
-  "tax rate",
-  "interest expense",
-  "sales",
-] as const;
-
-export const BalanceSheetMetrics = [
-  "assets",
-  "liabilities",
-  "equity",
-  "debt",
-  "cash",
-  "current assets",
-  "current liabilities",
-  "inventory",
-  "accounts receivable",
-  "accounts payable",
-] as const;
-
-export const CashFlowMetrics = [
-  "operating cash flow",
-  "free cash flow",
-  "capital expenditure",
-  "dividends paid",
-  "cash flow from investing",
-  "cash flow from financing",
-] as const;
-
-export const KeyMetrics = [
-  "pe ratio",
-  "price to earnings",
-  "pb ratio",
-  "price to book",
-  "market cap",
-  "eps growth",
-  "revenue growth",
-  "debt to equity",
-  "roe",
-  "roa",
-] as const;
-
-export const RatioMetrics = [
-  "current ratio",
-  "quick ratio",
-  "debt ratio",
-  "debt to equity",
-  "return on equity",
-  "return on assets",
-  "gross margin",
-  "profit margin",
-] as const;
-
-// Create types from the literals
-export type IncomeStatementMetric = (typeof IncomeStatementMetrics)[number];
-export type BalanceSheetMetric = (typeof BalanceSheetMetrics)[number];
-export type CashFlowMetric = (typeof CashFlowMetrics)[number];
-export type KeyMetric = (typeof KeyMetrics)[number];
-export type RatioMetric = (typeof RatioMetrics)[number];
-
-// Union type of all metrics
-export type FinancialMetric =
-  | IncomeStatementMetric
-  | BalanceSheetMetric
-  | CashFlowMetric
-  | KeyMetric
-  | RatioMetric;
-
-// Create a single array of all metrics for the Zod schema
-export const AllMetrics = [
-  ...IncomeStatementMetrics,
-  ...BalanceSheetMetrics,
-  ...CashFlowMetrics,
-  ...KeyMetrics,
-  ...RatioMetrics,
-] as const;
-
-const timeFrameEnum = z.enum([
-  "latest_quarter",
-  "previous_quarter",
-  "year_to_date",
-  "trailing_twelve_months",
-  "specific_quarter",
-  "specific_year",
-  "specific_date_range",
-  "past_n_quarters",
-  "past_n_years",
-  "not_specified",
-]);
-
-const specificPeriodSchema = z.object({
-  quarter: z.number().optional().describe("Quarter (1 or 2 or 3 or 4)"),
-  year: z.number().optional(),
-  startDate: z.string().optional().describe("Start date in YYYY-MM-DD format"),
-  endDate: z.string().optional().describe("End date in YYYY-MM-DD format"),
-  count: z.number().optional().describe("Number of quarters/years to analyze"),
-});
+import { getCurrentDateParams } from "@/lib/utils";
+import {
+  IncomeStatementMetrics,
+  BalanceSheetMetrics,
+  CashFlowMetrics,
+  KeyMetrics,
+  RatioMetrics,
+  AllMetrics,
+  timeFrameEnum,
+  specificPeriodSchema,
+} from "@/lib/constants";
 
 const currDateParams = getCurrentDateParams();
 
-export const PROMPTS = {
+export const QUERY_PROMPTS = {
   FINANCIAL_ANALYZER: {
     prompt: `You are a financial query analyzer specializing in earnings calls and financial metrics. Analyze the user's question and classify it into one or more of the following categories:
   
@@ -466,5 +372,86 @@ export const PROMPTS = {
         .optional()
         .describe("Details of the specific time period mentioned"),
     }),
+  },
+};
+
+export const SUMMARY_PROMPTS = {
+  TRANSCRIPT_SUMMARY: {
+    prompt: `Please provide a concise summary of {{COMPANY}}'s ({{TICKER}}) earnings call transcript.
+  
+Focus on:
+1. Key financial highlights
+2. Major announcements
+3. Strategic initiatives
+4. Forward-looking statements
+5. Any notable analyst questions and management responses
+
+Be conversational but informative in your response.`,
+  },
+
+  EXECUTIVE_SUMMARY: {
+    prompt: `Please extract and analyze statements made by {{EXECUTIVE_LIST}} from {{COMPANIES}} regarding {{TOPICS}}.
+
+Focus on:
+1. Direct quotes from the executives on these topics
+2. Context and implications of their statements
+3. Any changes in sentiment or messaging over time
+4. How these statements relate to company strategy or performance
+
+Provide a conversational and informative summary of what these executives have said about these topics.`,
+  },
+
+  FINANCIAL_DATA_SUMMARY: {
+    prompt: `Please analyze the financial data for {{COMPANY}} ({{TICKER}})
+  }) focusing on the metrics: {{METRICS}}.
+
+Provide:
+1. The specific values for these metrics
+2. Context on what these values mean
+3. Any trends or notable changes
+4. Brief comparison to industry standards if available
+
+Be conversational but precise with numbers and percentages.`,
+  },
+
+  METRIC_ANALYSIS_SUMMARY: {
+    prompt: `Please analyze how {{COMPANY}} ({{TICKER}}) discusses "{{METRIC}}" in their earnings calls and financial data.
+
+  {{ANALYSIS_TYPE}} === "point_in_time"
+    ? "Focus on the specific value and context for this period."
+    : "Focus on the trend over time and how the narrative has evolved."
+}
+
+Include:
+1. Actual metrics/numbers from the financial data
+2. How executives discuss this metric
+3. Any explanations for changes or performance
+4. Implications for the company's strategy or outlook
+
+Be conversational but factual in your analysis.`,
+  },
+
+  TRANSCRIPT_COMPARISON_SUMMARY: {
+    prompt: `Please compare how the companies {{COMPANIES}} discuss "{{COMPARISON_TOPIC}}" in their earnings calls.
+
+Focus on:
+1. Different approaches or emphasis each company places on this topic
+2. Specific strategies mentioned by each company
+3. How the messaging differs between competitors
+4. Any notable quotes that highlight their distinct approaches
+
+Provide a conversational but insightful comparison that highlights the key differences in how these companies talk about this topic.`,
+  },
+
+  METRIC_COMPARISON_SUMMARY: {
+    prompt: `Please compare the following metrics: {{METRICS}} across these companies: {{COMPANIES}}.
+
+Include:
+1. A direct comparison of the actual values
+2. Relative performance analysis
+3. Context on why there might be differences
+4. Any trends that are visible across the companies
+
+Be conversational but include specific numbers and percentages to make the comparison clear.`,
   },
 };

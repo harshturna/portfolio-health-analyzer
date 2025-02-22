@@ -9,7 +9,7 @@ import {
   KeyMetrics,
   RatioMetric,
   RatioMetrics,
-} from "@/lib/prompts";
+} from "@/lib/constants";
 
 const FMP_API_BASE_URL = "https://financialmodelingprep.com/api/v3";
 const API_KEY = process.env.FMP_API_KEY;
@@ -18,9 +18,6 @@ if (!API_KEY) {
   console.warn("FMP_API_KEY is not defined in environment variables");
 }
 
-/**
- * Constructs API URL with date parameters
- */
 function getTimeFrameParams(
   timeFrame: TimeFrame,
   specificPeriod?: SpecificPeriod
@@ -78,17 +75,11 @@ function getTimeFrameParams(
   return `&${params.toString()}`;
 }
 
-/**
- * Makes an API call and handles common error cases
- */
 async function fetchFmpApi(endpoint: string, params: string): Promise<any> {
   const url = `${FMP_API_BASE_URL}${endpoint}?apikey=${API_KEY}${params}`;
 
-  console.log("URL", url);
-
   const response = await fetch(url);
   if (!response.ok) {
-    console.log(response);
     throw new Error(`API error: ${response.status} ${response.statusText}`);
   }
 
@@ -100,9 +91,6 @@ async function fetchFmpApi(endpoint: string, params: string): Promise<any> {
   return data;
 }
 
-/**
- * Determines required financial statement endpoints based on metrics
- */
 function getRequiredStatements(metrics: string[]): string[] {
   const statements = new Set<string>();
 
@@ -127,9 +115,6 @@ function getRequiredStatements(metrics: string[]): string[] {
   return Array.from(statements);
 }
 
-/**
- * Main entry point for fetching data
- */
 export async function fetchDataForQuery(
   queryResult: QueryResult
 ): Promise<any> {
@@ -157,9 +142,6 @@ export async function fetchDataForQuery(
   }
 }
 
-/**
- * Fetches transcript summary
- */
 async function fetchTranscriptSummary(
   data: TranscriptSummaryData
 ): Promise<any> {
@@ -175,9 +157,6 @@ async function fetchTranscriptSummary(
     : transcripts;
 }
 
-/**
- * Fetches executive statements with concurrent requests
- */
 async function fetchExecutiveStatements(
   data: ExecutiveStatementsData
 ): Promise<any> {
@@ -197,9 +176,6 @@ async function fetchExecutiveStatements(
   return Object.fromEntries(results);
 }
 
-/**
- * Fetches financial data with concurrent requests
- */
 async function fetchFinancialData(data: FinancialDataQueryData): Promise<any> {
   const { ticker, metrics, timeFrame, specificPeriod } = data;
   if (!ticker) throw new Error("Ticker required");
@@ -219,9 +195,6 @@ async function fetchFinancialData(data: FinancialDataQueryData): Promise<any> {
   return Object.fromEntries(results);
 }
 
-/**
- * Fetches metric analysis with concurrent requests
- */
 async function fetchMetricAnalysis(data: MetricAnalysisData): Promise<any> {
   const { ticker, metric, timeFrame, specificPeriod } = data;
   if (!ticker) throw new Error("Ticker required");
@@ -244,9 +217,6 @@ async function fetchMetricAnalysis(data: MetricAnalysisData): Promise<any> {
   return Object.fromEntries(results);
 }
 
-/**
- * Fetches transcript comparison with concurrent requests
- */
 async function fetchTranscriptComparison(
   data: TranscriptComparisonData
 ): Promise<any> {
@@ -266,9 +236,6 @@ async function fetchTranscriptComparison(
   return Object.fromEntries(results);
 }
 
-/**
- * Fetches metric comparison with concurrent requests
- */
 async function fetchMetricComparison(data: MetricComparisonData): Promise<any> {
   const { tickers, metrics, timeFrame, specificPeriod } = data;
   if (!tickers?.length) throw new Error("At least one ticker required");

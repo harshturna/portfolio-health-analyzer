@@ -1,7 +1,8 @@
 import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
-import { PROMPTS } from "../../prompts";
-import { addUserQuestion } from "../../utils";
+
+import { QUERY_PROMPTS as PROMPTS } from "@/lib/prompts";
+import { addUserQuestion } from "@/lib/utils";
 
 const openai = new OpenAI();
 

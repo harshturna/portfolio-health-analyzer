@@ -69,7 +69,6 @@ interface ContextAnalysisResult {
   relevantMetrics?: string[];
 }
 
-// Basic type definitions
 type TimeFrame =
   | "latest_quarter"
   | "previous_quarter"
@@ -90,7 +89,6 @@ interface SpecificPeriod {
   count?: number;
 }
 
-// Define the data structure for each query type
 type TranscriptSummaryData = {
   company: string;
   ticker: string;

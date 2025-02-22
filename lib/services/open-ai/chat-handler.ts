@@ -8,10 +8,10 @@ export async function handleUserQuery(
   newUserInput: string
 ): Promise<ChatResponse> {
   // Add the new message to our collection (copy only, don't modify original)
-  const updatedMessages = [
-    ...messages,
-    { role: "user", content: newUserInput },
-  ];
+  // const updatedMessages = [
+  //   ...messages,
+  //   { role: "user", content: newUserInput },
+  // ];
 
   // Check if this is the initial message
   const isInitialMessage = messages.length === 0;
