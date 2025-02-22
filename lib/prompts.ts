@@ -1,4 +1,28 @@
 import { z } from "zod";
+import { getCurrentDateParams } from "./utils";
+
+const timeFrameEnum = z.enum([
+  "latest_quarter",
+  "previous_quarter",
+  "year_to_date",
+  "trailing_twelve_months",
+  "specific_quarter",
+  "specific_year",
+  "specific_date_range",
+  "past_n_quarters",
+  "past_n_years",
+  "not_specified",
+]);
+
+const specificPeriodSchema = z.object({
+  quarter: z.number().optional().describe("Quarter (1 or 2 or 3 or 4)"),
+  year: z.number().optional(),
+  startDate: z.string().optional().describe("Start date in YYYY-MM-DD format"),
+  endDate: z.string().optional().describe("End date in YYYY-MM-DD format"),
+  count: z.number().optional().describe("Number of quarters/years to analyze"),
+});
+
+const currDateParams = getCurrentDateParams();
 
 export const PROMPTS = {
   FINANCIAL_ANALYZER: {
@@ -31,165 +55,294 @@ export const PROMPTS = {
   },
 
   TRANSCRIPT_SUMMARY: {
-    prompt: `Extract the details for this earnings call summary request. Identify the company name, company stock ticker symbol, and which earnings call to summarize (latest, specific quarter, etc.). If you can't identify the stock ticker or the company, leave them empty.
+    prompt: `You are a financial query analyzer specializing in earnings calls and financial metrics. Extract the details for this earnings call summary request from the user question below.
     
-    User query: "{{userQuestion}}"`,
+    Follow these strict guidelines:
+    1. Identify ONLY the exact company name as mentioned in the user question - do not infer, expand, or generate company names not explicitly stated
+    2. Infer the stock ticker symbol when you are 100% confident (e.g., "Apple" → "AAPL", "Microsoft" → "MSFT")
+    3. If you cannot determine the ticker with absolute certainty, leave the ticker field empty
+    4. Determine which specific earnings call to summarize based on the question
+    5. IMPORTANT: When interpreting relative time references, use the current date of ${
+      currDateParams.currentDate
+    } as reference
+    6. For time periods:
+       - If the user mentions "latest" or "most recent", use "latest_quarter"
+       - If the user mentions "last quarter" or "previous quarter" or a similar variation, use "previous_quarter"
+       - If the user mentions "last year" or "previous year" or a similar variation, use "specific_year" and fill in year=${
+         currDateParams.currentYear - 1
+       }
+       - If the user mentions a specific quarter like "Q2 2023", use "specific_quarter" and fill in the specificPeriod details
+       - If the user doesn't specify a time period, use "not_specified"
+    
+    User question: "{{userQuestion}}"`,
 
     schema: z.object({
-      company: z.string().describe("Full company name"),
-      ticker: z.string().describe("Stock ticker symbol"),
-      timeFrame: z
-        .enum([
-          "latest",
-          "previous",
-          "Q1_2023",
-          "Q2_2023",
-          "Q3_2023",
-          "Q4_2023",
-          "Q1_2024",
-          "Q2_2024",
-          "Q3_2024",
-          "Q4_2024",
-        ])
-        .describe("Which earnings call to summarize"),
+      company: z
+        .string()
+        .describe("Exact company name as mentioned in the question"),
+      ticker: z
+        .string()
+        .describe(
+          "Stock ticker symbol - infer when 100% confident, otherwise leave empty"
+        ),
+      timeFrame: timeFrameEnum.describe(
+        "Which specific earnings call to summarize"
+      ),
+      specificPeriod: specificPeriodSchema
+        .optional()
+        .describe("Details of the specific time period mentioned"),
     }),
   },
 
   EXECUTIVE_STATEMENTS: {
-    prompt: `Extract details about executive statements from this query. Identify the executives mentioned, the company/companies they represent, companies stock ticker symbols, the topic of interest, and the relevant time period. If you can't identify the ticker or the company, leave them empty.
-
-    User query: "{{userQuestion}}"`,
+    prompt: `You are a financial query analyzer specializing in earnings calls and financial metrics. Extract details about executive statements from the following user question.
+    
+    Follow these strict guidelines:
+    1. Identify ONLY the exact executive names as mentioned in the user question
+    2. Identify ONLY the exact company names as mentioned in the question - do not infer, expand, or generate company names not explicitly stated
+    3. Infer stock ticker symbols when you are 100% confident (e.g., "Apple" → "AAPL", "Microsoft" → "MSFT")
+    4. If you cannot determine the tickers with absolute certainty, leave the ticker entries empty
+    5. Extract the specific topic of interest mentioned in the question
+    6. IMPORTANT: When interpreting relative time references, use the current date of ${
+      currDateParams.currentDate
+    } as reference
+    7. Determine the time period for the statements based on the question:
+       - If the user mentions "latest" or "most recent", use "latest_quarter"
+       - If the user mentions "last quarter" or "previous quarter" or a similar variation, use "previous_quarter"
+       - If the user mentions a date range like "between January and March 2023", use "specific_date_range" and fill in startDate and endDate
+       - If the user mentions "past year", use "past_n_years" with count=1
+       - If the user mentions "last year" or "previous year" or a similar variation, use "specific_year" and fill in year=${
+         currDateParams.currentYear - 1
+       }
+       - If the user doesn't specify a time period, use "not_specified"
+    
+    User question: "{{userQuestion}}"`,
 
     schema: z.object({
-      executives: z.array(z.string()).describe("Names of executives mentioned"),
+      executives: z
+        .array(z.string())
+        .describe("Exact names of executives as mentioned in the question"),
       companies: z
         .array(z.string())
-        .describe("Companies these executives represent"),
-      tickers: z.array(z.string()).describe("Stock ticker symbols"),
-      topic: z.string().describe("The subject matter of interest"),
-      timeFrame: z
-        .enum([
-          "latest",
-          "recent",
-          "past_year",
-          "past_quarter",
-          "specific_date_range",
-        ])
-        .describe("Time period to search for statements"),
-      dateRange: z
-        .object({
-          start: z.string().optional(),
-          end: z.string().optional(),
-        })
+        .describe("Exact company names as mentioned in the question"),
+      tickers: z
+        .array(z.string())
+        .describe(
+          "Stock ticker symbols - infer when 100% confident, otherwise leave empty"
+        ),
+      topic: z
+        .string()
+        .describe(
+          "Specific subject matter of interest mentioned in the question"
+        ),
+      timeFrame: timeFrameEnum.describe(
+        "Time period referenced in the question"
+      ),
+      specificPeriod: specificPeriodSchema
         .optional()
-        .describe("Specific date range if applicable"),
+        .describe("Details of the specific time period mentioned"),
     }),
   },
 
   METRIC_LOOKUP: {
-    prompt: `Extract details for this financial metric lookup request. Identify the specific metrics mentioned, the company, company stock ticker symbol, and the time period referenced. If you can't identify the ticker or the company, leave them empty.
+    prompt: `You are a financial query analyzer specializing in earnings calls and financial metrics. Extract details for this financial metric lookup request from the user question below.
+  
+    Follow these strict guidelines:
+    1. Identify ONLY the exact company name as mentioned in the user question - do not infer, expand, or generate company names not explicitly stated
+    2. Infer the stock ticker symbol when you are 100% confident (e.g., "Apple" → "AAPL", "Microsoft" → "MSFT")
+    3. If you cannot determine the ticker with absolute certainty, leave the ticker field empty
+    4. Extract all specific financial metrics or KPIs mentioned in the question
+    5. IMPORTANT: When interpreting relative time references, use the current date of ${
+      currDateParams.currentDate
+    } as reference
+    6. Determine the time period for the metrics based on the question:
+       - If the user mentions "latest" or "most recent quarter", use "latest_quarter"
+       - If the user mentions "last quarter" or "previous quarter" or a similar variation, use "previous_quarter"
+       - If the user mentions a specific quarter like "Q1 2023", use "specific_quarter" and fill in quarter and year
+       - If the user mentions "full year 2022", use "specific_year" and fill in year
+       - If the user mentions "last year" or "previous year" or a similar variation, use "specific_year" and fill in year=${
+         currDateParams.currentYear - 1
+       }
+       - If the user mentions "this year", use "specific_year" and fill in year=${
+         currDateParams.currentYear
+       }
+       - If the user mentions "TTM" or "trailing twelve months", use "trailing_twelve_months"
+       - If the user mentions "YTD" or "year to date", use "year_to_date"
+       - If the user doesn't specify a time period, use "not_specified"
     
-    User query: "{userQuestion}"`,
+    User question: "{{userQuestion}}"`,
 
     schema: z.object({
-      company: z.string().describe("Company name"),
-      ticker: z.string().describe("Stock ticker symbol"),
+      company: z
+        .string()
+        .describe("Exact company name as mentioned in the question"),
+      ticker: z
+        .string()
+        .describe(
+          "Stock ticker symbol - infer when 100% confident, otherwise leave empty"
+        ),
       metrics: z
         .array(z.string())
-        .describe("Specific financial metrics or KPIs mentioned"),
-      timeFrame: z
-        .enum([
-          "latest_quarter",
-          "previous_quarter",
-          "specific_quarter",
-          "full_year",
-          "trailing_twelve_months",
-        ])
-        .describe("Time period for the metrics"),
-      specificPeriod: z
-        .string()
+        .describe(
+          "All specific financial metrics or KPIs mentioned in the question"
+        ),
+      timeFrame: timeFrameEnum.describe("Time period for the metrics"),
+      specificPeriod: specificPeriodSchema
         .optional()
-        .describe("If a specific quarter/year is mentioned"),
+        .describe("Details of the specific time period mentioned"),
     }),
   },
 
   TREND_ANALYSIS: {
-    prompt: `Extract details for this trend analysis request. Identify the company, company stock ticker symbol,  topic or metric to track, and the time period over which to analyze the trend. If you can't identify the ticker or the company, leave them empty.
+    prompt: `You are a financial query analyzer specializing in earnings calls and financial metrics. Extract details for this trend analysis request from the user question below.
     
-    User query: "{userQuestion}"`,
+    Follow these strict guidelines:
+    1. Identify ONLY the exact company name as mentioned in the user question - do not infer, expand, or generate company names not explicitly stated
+    2. Infer the stock ticker symbol when you are 100% confident (e.g., "Apple" → "AAPL", "Microsoft" → "MSFT")
+    3. If you cannot determine the ticker with absolute certainty, leave the ticker field empty
+    4. Extract the specific topic or metric to be analyzed over time
+    5. IMPORTANT: When interpreting relative time references, use the current date of ${
+      currDateParams.currentDate
+    } as reference
+    6. Determine the time span for the trend analysis based on the question:
+       - If the user mentions "past 4 quarters", use "past_n_quarters" and fill in count=4
+       - If the user mentions "past year", use "past_n_years" and fill in count=1
+       - If the user mentions "past 2 years", use "past_n_years" and fill in count=2
+       - If the user mentions "last year" or "previous year" or a similar variation, use "specific_year" and fill in year=${
+         currDateParams.currentYear - 1
+       }
+       - If the user mentions "this year", use "specific_year" and fill in year=${
+         currDateParams.currentYear
+       }
+       - If the user mentions a date range like "2020 to 2023", use "specific_date_range" and fill in startDate and endDate
+       - If the user doesn't specify a time period, use "not_specified"
+    
+    User question: "{{userQuestion}}"`,
 
     schema: z.object({
-      company: z.string().describe("Company name"),
-      ticker: z.string().describe("Stock ticker symbol"),
-      topic: z.string().describe("Topic or metric to analyze over time"),
-      timeSpan: z
-        .enum([
-          "past_year",
-          "past_two_years",
-          "past_four_quarters",
-          "past_eight_quarters",
-          "custom_range",
-        ])
-        .describe("Time span to analyze"),
-      quarters: z
-        .number()
-        .min(1)
-        .max(12)
+      company: z
+        .string()
+        .describe("Exact company name as mentioned in the question"),
+      ticker: z
+        .string()
+        .describe(
+          "Stock ticker symbol - infer when 100% confident, otherwise leave empty"
+        ),
+      topic: z
+        .string()
+        .describe("Specific topic or metric to analyze over time"),
+      timeFrame: timeFrameEnum.describe("Time span referenced in the question"),
+      specificPeriod: specificPeriodSchema
         .optional()
-        .describe("Number of quarters to analyze if custom"),
+        .describe("Details of the specific time period mentioned"),
     }),
   },
 
   COMPARISON_QUERY: {
-    prompt: `Extract details for this comparison request. Identify the companies being compared, companies stock ticker symbols, the topic or metric of comparison, and the relevant time period. If you can't identify the ticker or the company, leave them empty.
-    
-    User query: "{userQuestion}"`,
+    prompt: `You are a financial query analyzer specializing in earnings calls and financial metrics. Your task is to carefully extract specific details for a comparison request from the user question.
+  
+    Follow these strict guidelines:
+    1. Identify ONLY the exact company names as mentioned in the user question - do not infer, expand, or generate company names not explicitly stated
+    2. Infer stock ticker symbols for well-known companies when you are 100% confident (e.g., "Apple" → "AAPL", "Microsoft" → "MSFT")
+    3. For company names where you cannot determine the ticker with absolute certainty, leave the ticker entry empty
+    4. Identify the specific comparison topic or metric mentioned (e.g., revenue, profit margin, EPS)
+    5. IMPORTANT: When interpreting relative time references, use the current date of ${
+      currDateParams.currentDate
+    } as reference
+    6. Determine the time period requested for comparison:
+       - If the user mentions "latest quarter", use "latest_quarter"
+       - If the user mentions "previous quarter", use "previous_quarter"
+       - If the user mentions "YTD" or "year to date", use "year_to_date"
+       - If the user mentions "TTM" or "trailing twelve months", use "trailing_twelve_months"
+       - If the user mentions "last year" or "previous year" or a similar variation, use "specific_year" and fill in year=${
+         currDateParams.currentYear - 1
+       }
+       - If the user mentions "this year", use "specific_year" and fill in year=${
+         currDateParams.currentYear
+       }
+       - If the user mentions a specific quarter like "Q3 2023", use "specific_quarter" and fill in quarter=3 and year=2023
+       - If the user mentions a specific year like "fiscal 2022", use "specific_year" and fill in year=2022
+       - If the user mentions a date range, use "specific_date_range" and fill in startDate and endDate
+       - If the user doesn't specify a time period, use "not_specified"
+  
+    User question: "{{userQuestion}}"`,
 
     schema: z.object({
-      companies: z.array(z.string()).min(2).describe("Companies to compare"),
-      tickers: z.array(z.string()).min(2).describe("Stock ticker symbols"),
-      comparisonTopic: z.string().describe("Topic or metric to compare"),
-      timeFrame: z
-        .enum([
-          "latest_quarter",
-          "previous_quarter",
-          "year_to_date",
-          "trailing_twelve_months",
-          "specific_period",
-        ])
-        .describe("Time period for comparison"),
-      specificPeriod: z
+      companies: z
+        .array(z.string())
+        .describe(
+          "ONLY the exact company names explicitly mentioned in the question"
+        ),
+      tickers: z
+        .array(z.string())
+        .describe(
+          "Stock ticker symbols - infer for well-known companies when 100% confident, otherwise leave empty"
+        ),
+      comparisonTopic: z
         .string()
+        .describe("Specific topic or metric requested for comparison"),
+      timeFrame: timeFrameEnum.describe("Time period for comparison"),
+      specificPeriod: specificPeriodSchema
         .optional()
-        .describe("If a specific time period is mentioned"),
+        .describe("Details of the specific time period mentioned"),
     }),
   },
 
   COMBINED_QUERY: {
-    prompt: `Extract details for this combined data and commentary request. Identify the company, company stock ticker symbol, the financial metrics requested, and the related topic for management commentary. If you can't identify the ticker or the company, leave them empty.
+    prompt: `You are a financial query analyzer specializing in earnings calls and financial metrics. Extract details for this combined data and commentary request from the user question below.
     
-    User query: "{userQuestion}"`,
+    Follow these strict guidelines:
+    1. Identify ONLY the exact company name as mentioned in the user question - do not infer, expand, or generate company names not explicitly stated
+    2. Infer the stock ticker symbol when you are 100% confident (e.g., "Apple" → "AAPL", "Microsoft" → "MSFT")
+    3. If you cannot determine the ticker with absolute certainty, leave the ticker field empty
+    4. Extract all specific financial metrics requested in the question
+    5. Identify the specific topic for management commentary
+    6. IMPORTANT: When interpreting relative time references, use the current date of ${
+      currDateParams.currentDate
+    } as reference
+    7. Determine the time period referenced in the question:
+       - If the user mentions "latest quarter", use "latest_quarter"
+       - If the user mentions "previous quarter", use "previous_quarter"
+       - If the user mentions "YTD" or "year to date", use "year_to_date"
+       - If the user mentions "past year", use "past_n_years" with count=1
+       - If the user mentions "past 4 quarters", use "past_n_quarters" with count=4
+       - If the user mentions "last year" or "previous year" or a similar variation, use "specific_year" and fill in year=${
+         currDateParams.currentYear - 1
+       }
+       - If the user mentions "this year", use "specific_year" and fill in year=${
+         currDateParams.currentYear
+       }
+       - If the user mentions a specific quarter like "Q2 2023", use "specific_quarter" and fill in quarter=2 and year=2023
+       - If the user mentions a specific year like "2022", use "specific_year" and fill in year=2022
+       - If the user doesn't specify a time period, use "not_specified"
+    
+    User question: "{{userQuestion}}"`,
 
     schema: z.object({
-      company: z.string().describe("Company name"),
-      ticker: z.string().describe("Stock ticker symbol"),
-      metrics: z.array(z.string()).describe("Financial metrics requested"),
+      company: z
+        .string()
+        .describe("Exact company name as mentioned in the question"),
+      ticker: z
+        .string()
+        .describe(
+          "Stock ticker symbol - infer when 100% confident, otherwise leave empty"
+        ),
+      metrics: z
+        .array(z.string())
+        .describe(
+          "All financial metrics specifically requested in the question"
+        ),
       commentaryTopic: z
         .string()
-        .describe("Related topic for management commentary"),
-      timeFrame: z
-        .enum([
-          "latest_quarter",
-          "year_to_date",
-          "past_year",
-          "past_four_quarters",
-          "specific_period",
-        ])
-        .describe("Time period to analyze"),
-      specificPeriod: z
-        .string()
+        .describe(
+          "Specific topic for management commentary mentioned in the question"
+        ),
+      timeFrame: timeFrameEnum.describe(
+        "Time period referenced in the question"
+      ),
+      specificPeriod: specificPeriodSchema
         .optional()
-        .describe("If a specific time period is mentioned"),
+        .describe("Details of the specific time period mentioned"),
     }),
   },
 };

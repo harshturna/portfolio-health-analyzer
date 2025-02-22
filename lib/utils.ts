@@ -29,6 +29,15 @@ export function addUserQuestion(
   return injectValuesIntoPrompt(promptTemplate, { userQuestion });
 }
 
+export function getCurrentDateParams() {
+  const now = new Date();
+  return {
+    currentDate: now.toISOString().split("T")[0],
+    currentYear: now.getFullYear(),
+    currentQuarter: Math.floor(now.getMonth() / 3) + 1,
+  };
+}
+
 /**
  * Calculate current stock price from market cap and shares outstanding
  */

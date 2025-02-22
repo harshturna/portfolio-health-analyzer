@@ -4,13 +4,15 @@ import { analyzeQuery, processAnalyzedQuery } from "@/lib/services/open-ai";
 
 const Home = async () => {
   const analysis = await analyzeQuery(
-    "What has ServiceNow's management said about profitability over the last few earnings calls?"
+    "what was apple's profit for the year 2023?"
   );
+
+  console.log({ analysis });
 
   if (analysis) {
     processAnalyzedQuery(
       analysis,
-      "What has ServiceNow's management said about profitability over the last few earnings calls?"
+      "what was apple's profit for the year 2023?"
     );
   }
 
