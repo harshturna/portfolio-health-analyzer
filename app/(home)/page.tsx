@@ -4,7 +4,7 @@ import { analyzeQuery, processAnalyzedQuery } from "@/lib/services/open-ai";
 
 const Home = async () => {
   const analysis = await analyzeQuery(
-    "what was apple's profit for the year 2023?"
+    "What's Amazon's revenue for 2023 and what did Andy Jassy say about AWS growth?"
   );
 
   console.log({ analysis });
@@ -12,7 +12,7 @@ const Home = async () => {
   if (analysis) {
     processAnalyzedQuery(
       analysis,
-      "what was apple's profit for the year 2023?"
+      "What's Amazon's revenue for 2023 and what did Andy Jassy say about AWS growth?"
     );
   }
 

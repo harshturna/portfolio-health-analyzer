@@ -53,10 +53,10 @@ interface QueryAnalysisResult {
   queryType:
     | "TRANSCRIPT_SUMMARY"
     | "EXECUTIVE_STATEMENTS"
-    | "METRIC_LOOKUP"
-    | "TREND_ANALYSIS"
-    | "COMPARISON_QUERY"
-    | "COMBINED_QUERY";
+    | "FINANCIAL_DATA_QUERY"
+    | "METRIC_ANALYSIS"
+    | "TRANSCRIPT_COMPARISON"
+    | "METRIC_COMPARISON";
   confidenceScore: number;
   clarifyQuestion: string;
 }
