@@ -5,7 +5,7 @@ import {
   generateFinalResponse,
 } from "@/lib/services/open-ai/chat-handler";
 
-export const MAX_DURATION = 300;
+export const maxDuration = 300;
 
 export async function POST(req: Request) {
   try {
