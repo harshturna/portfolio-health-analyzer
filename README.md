@@ -14,7 +14,7 @@
 
 ## Copilot Request Lifecycle
 
-![Copilot Request lifecycle](https://res.cloudinary.com/dlp6wui7r/image/upload/v1740342782/ecom/request-lifecycle_xcrlgb.png)
+![Copilot Request lifecycle](https://res.cloudinary.com/dlp6wui7r/image/upload/v1740342916/ecom/request-lifecycle_1_xil8ws.png)
 
 ## Tech Stack
 
