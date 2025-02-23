@@ -30,7 +30,9 @@ interface SectorAllocationChartProps {
   }[];
 }
 
-const SectorAllocationChart = ({ chartData }: SectorAllocationChartProps) => {
+export default function SectorAllocationChart({
+  chartData,
+}: SectorAllocationChartProps) {
   return (
     <Card className="p-4 border-none mx-3 lg:mx-24">
       <CardHeader className="p-2">
@@ -70,6 +72,4 @@ const SectorAllocationChart = ({ chartData }: SectorAllocationChartProps) => {
       </CardFooter>
     </Card>
   );
-};
-
-export default SectorAllocationChart;
+}

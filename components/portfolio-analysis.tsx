@@ -3,31 +3,19 @@
 import { ChartNoAxesColumnIncreasing } from "lucide-react";
 
 import { METRICS } from "@/lib/constants";
-import NavTabs from "@/components/ui/nav-tabs";
 import { useListings } from "@/store/use-listings";
 import ValueCard from "@/components/value-card";
 import HoldingCard from "@/components/holding-card";
 import MetricsCard from "@/components/metrics-card";
 import RiskScoreChart from "@/components/risk-score-chart";
-import SectorAllocationChart from "./sector-allocation-chart";
+import SectorAllocationChart from "@/components/sector-allocation-chart";
 import {
   calculatePortfolioRiskLevel,
   generatePortfolioSummary,
-} from "@/lib/utils";
+} from "@/lib/services/portfolio/portfolio";
 
-const PortfolioAnalysis = () => {
+export default function PortfolioAnalysis() {
   const listings = useListings((store) => store.listings);
-
-  const navTabs = [
-    {
-      name: "Home",
-      link: "/",
-    },
-    {
-      name: "Dashboard",
-      link: "/dashboard",
-    },
-  ];
 
   if (!listings.length) {
     return (
@@ -44,9 +32,6 @@ const PortfolioAnalysis = () => {
 
   return (
     <div className="p-4 lg:p-8">
-      <div className="ml-5 lg:ml-24">
-        <NavTabs tabs={navTabs} />
-      </div>
       <div className="flex-col lg:flex-row p-4 lg:p-8 pb-4 flex gap-4 flex-wrap justify-center">
         <div className="w-full lg:w-[30%]">
           <RiskScoreChart
@@ -96,6 +81,4 @@ const PortfolioAnalysis = () => {
       <SectorAllocationChart chartData={portfolioSummary.formattedSectorData} />
     </div>
   );
-};
-
-export default PortfolioAnalysis;
+}

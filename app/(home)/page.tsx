@@ -1,27 +1,19 @@
 import Hero from "@/components/hero";
 import PortfolioBuilder from "@/components/portfolio-builder";
-import { analyzeQuery, processAnalyzedQuery } from "@/lib/services/open-ai";
+import CopilotButton from "@/components/copilot-button";
 
-const Home = async () => {
-  const analysis = await analyzeQuery(
-    "What has ServiceNow's management said about profitability over the last few earnings calls?"
-  );
-
-  if (analysis) {
-    processAnalyzedQuery(
-      analysis,
-      "What has ServiceNow's management said about profitability over the last few earnings calls?"
-    );
-  }
-
+export default async function Home() {
   return (
-    <main className="h-full flex flex-col items-center mt-6 md:mt-32">
-      <div>
-        <Hero />
-        <PortfolioBuilder />
+    <main className="h-[calc(100vh+50px)] max-w-7xl mx-auto">
+      <div className="flex justify-end pt-12 px-6 md:px-12">
+        <CopilotButton />
+      </div>
+      <div className="flex flex-col items-center px-4">
+        <div>
+          <Hero />
+          <PortfolioBuilder />
+        </div>
       </div>
     </main>
   );
-};
-
-export default Home;
+}

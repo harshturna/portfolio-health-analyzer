@@ -21,7 +21,7 @@ interface ListingResponse {
   data?: Listing;
 }
 
-const AddHoldingPopover = () => {
+export default function AddHoldingPopover() {
   const uniqueId = useId();
   const formContainerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -214,6 +214,4 @@ const AddHoldingPopover = () => {
       </div>
     </MotionConfig>
   );
-};
-
-export default AddHoldingPopover;
+}

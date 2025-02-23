@@ -6,13 +6,13 @@ import { useListings } from "@/store/use-listings";
 import ListingCard from "@/components/listing-card";
 import AddHoldingPopover from "@/components/add-holding-popover";
 
-const PortfolioBuilder = () => {
+export default function PortfolioBuilder() {
   const listings = useListings((store) => store.listings);
   const router = useRouter();
 
   return (
     <div>
-      <h2 className="mt-12 mb-6 text-lg sm:text-xl md:text-2xl text-center font-medium">
+      <h2 className="mt-8 mb-6 text-lg sm:text-xl md:text-2xl text-center font-medium">
         Add your portfolio listings
       </h2>
       {listings.map((listing) => (
@@ -30,6 +30,4 @@ const PortfolioBuilder = () => {
       </div>
     </div>
   );
-};
-
-export default PortfolioBuilder;
+}
