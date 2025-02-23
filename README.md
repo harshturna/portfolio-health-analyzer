@@ -51,4 +51,4 @@ npm run dev
 ## Possible impovements/extensions for future
 - Steaming responses to reduce waiting period
 - Chats history saving
-- Specialized data visualization components
+- Specialized data visualization components for chat
