@@ -16,8 +16,10 @@ export async function processQueryWithData(
 
     const promptContent = generatePromptForData(queryResult, financialData);
 
+    console.log("PROMPT_CONTENT", promptContent);
+
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-2024-11-20",
+      model: "gpt-4o-mini-2024-07-18",
       messages: [
         {
           role: "system",
@@ -39,9 +41,7 @@ export async function processQueryWithData(
     );
   } catch (error) {
     console.error("Error processing query with data:", error);
-    return `I apologize, but I encountered an error while retrieving the financial information: ${
-      error instanceof Error ? error.message : String(error)
-    }`;
+    return `I apologize, but I encountered an error while retrieving the financial information`;
   }
 }
 
@@ -57,7 +57,23 @@ function generatePromptForData(
   financialData: any
 ): string {
   const dataString = JSON.stringify(financialData, null, 2);
-  const basePrompt = `Answer the user's question based on the following financial data:\n\n${dataString}\n\n`;
+  const basePrompt = `Answer the user's question based on the following financial data in markdown format with proper formatting:
+  Please ensure your response:
+- Uses proper header hierarchy (# for main titles, ## for subtitles)
+- Includes a blank line before and after headers, lists, and code blocks
+- Formats numbers consistently with appropriate decimal places
+- Employs emphasis (*italic* or **bold**) to highlight key insights
+- Breaks down complex information into readable paragraphs
+- Uses horizontal rules (---) to separate major sections when appropriate
+- Uses tables for structured financial data
+- Uses the following syntax for tables (include new lines)
+| Title 1 | Title 2  |\n  
+|--|--|\n
+| data 1 row 1 | data 2 row 1 |\n
+|data 1 row 2| data 2 row 2 |
+  
+  Financial data:
+  \n\n${dataString}\n\n`;
 
   switch (queryResult.type) {
     case "TRANSCRIPT_SUMMARY":

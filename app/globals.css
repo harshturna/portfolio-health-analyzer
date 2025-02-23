@@ -27,6 +27,40 @@ h1, h4, h6 {
   letter-spacing: 0.2rem;
 }
 
+.chat-messages h1, .chat-messages h2 {
+  font-weight: bold;
+  text-align: center;
+  font-family: sans-serif;
+  letter-spacing: 0rem;
+  margin-block: 5px;
+}
+
+.chat-messages h1 {
+  font-size: 1.2rem;
+}
+
+.chat-messages h2 {
+  font-size: 1.1rem;
+}
+
+h2 strong {
+  font-weight: bold;
+}
+
+.chat-messages h3 {
+  font-weight: bolder;
+  margin-block: 5px;
+}
+
+.chat-messages hr {
+  margin-block: 10px;
+}
+
+.chat-messages a {
+ text-decoration: underline;
+ color: #2563eb;
+}
+
 @layer base {
   :root {
     --background: 40, 20%, 97%;

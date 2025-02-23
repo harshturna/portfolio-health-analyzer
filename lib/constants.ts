@@ -53,6 +53,28 @@ export const METRICS: MetricItem[] = [
   },
 ];
 
+export const chatPlaceHolderQuestions: {
+  title: string;
+  description: string;
+}[] = [
+  {
+    title: "Summarize",
+    description: " Spotify's latest conference call.",
+  },
+  {
+    title: "How many",
+    description: " new large deals did ServiceNow sign in the last quarter?",
+  },
+  {
+    title: "Compare",
+    description: "top 3 cloud providers on their security investments",
+  },
+  {
+    title: "How Profitable",
+    description: "was Amazon last year compared to Walmart?",
+  },
+];
+
 export const IncomeStatementMetrics = [
   "revenue",
   "gross profit",

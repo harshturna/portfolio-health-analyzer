@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     // Validate input
     if (!Array.isArray(messages) || !newMessage) {
       return NextResponse.json(
-        { success: false, type: "client", message: "Invalid request body" },
+        { success: false, message: "Invalid request body" },
         { status: 400 }
       );
     }
@@ -22,31 +22,34 @@ export async function POST(req: Request) {
     let result;
 
     if (isClarification) {
+      // if the new answer was a clarification
       result = await handleClarification(
         messages as Message[],
         newMessage as string
       );
     } else {
+      // normal flow
       result = await handleUserQuery(
         messages as Message[],
         newMessage as string
       );
     }
 
-    // Check if we need clarification
+    // if we need clarification from user
     if (!Array.isArray(result) && result.type === "clarification_needed") {
       return NextResponse.json({
         success: true,
         needsClarification: true,
-        question: result.message,
+        message: result.message,
       });
     }
 
-    // If it's a direct response (from context analyzer)
+    // If it's a direct response to existing context
     if (!Array.isArray(result) && result.type === "direct_response") {
+      console.log("direct response");
       return NextResponse.json({
         success: true,
-        answer: result.message,
+        message: result.message,
         needsClarification: false,
       });
     }
@@ -57,17 +60,15 @@ export async function POST(req: Request) {
       [...messages, { role: "user", content: newMessage }]
     );
 
-    console.log(result);
-
     return NextResponse.json({
       success: true,
-      answer: finalAnswer,
+      message: finalAnswer,
       needsClarification: false,
     });
   } catch (error) {
-    console.error("Error processing chat:", error);
+    console.error("[CHAT_ERROR]", error);
     return NextResponse.json(
-      { success: false, type: "server", message: "Internal server error" },
+      { success: false, message: "Internal server error" },
       { status: 500 }
     );
   }

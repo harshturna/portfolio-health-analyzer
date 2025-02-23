@@ -14,17 +14,38 @@ const contextAnalysisSchema = z.object({
     .describe("Direct response if this is a continuation, empty string if not"),
 });
 
-const CONTEXT_ANALYZER_PROMPT = `You are an assistant that determines if a new question is a continuation of the previous conversation or a new topic entirely in the context of financial analysis.
+const CONTEXT_ANALYZER_PROMPT = `You are a financial context analyzer that directly answers follow-up questions when you have the required financial context.
 
-Given the conversation history and the latest question, determine:
-1. If the latest question is continuing or referring to the previous topic/companies/metrics (isContinuation)
-2. If it's a continuation, provide a direct response to the Latest question based on the context (response)
-3. If it's a new topic, set isContinuation to false and response to empty string
+Given the conversation history and the latest question:
+
+1. First, identify any companies, tickers, or financial entities, topics mentioned in the latest question
+
+2. Check if the conversation history EXPLICITLY contains:
+   - Financial statements summary (Income Statement, Balance Sheet, Cash Flow)
+   - Key metrics summary (Revenue, Profit, Margins, etc.)
+   - Financial ratios discussion
+   - Earnings transcript summaries
+   - Detailed financial analysis
+   For the SPECIFIC companies/entities identified in step 1
+
+3. Rules:
+   - If isContinuation is true, you MUST provide a complete answer in directAnswer to Latest question, not just acknowledge you can answer
+   - Never respond with phrases like "I can do that" or "Certainly" - always give the actual answer
+   - If the question requires previously discussed data, use that data to answer immediately
+   - Must include specific numbers, metrics, and analysis in directAnswer when available
+   - Must be false if data needed isn't in conversation history
+   
+4. Example Good Response:
+   Question: "What was their revenue growth?"
+   BAD: "Certainly, I can tell you about the revenue growth."
+   GOOD: "Revenue grew by 23% year-over-year to $5.2B in Q4 2023, driven by..."
 
 Previous conversation:
 {{conversationHistory}}
 
-Latest question: "{{latestQuestion}}"`;
+Latest question: "{{latestQuestion}}"
+
+If you have the required financial context, provide the complete answer immediately without acknowledgment phrases.`;
 
 export async function analyzeContext(
   previousMessages: Message[],
@@ -41,7 +62,7 @@ export async function analyzeContext(
 
   try {
     const completion = await openai.beta.chat.completions.parse({
-      model: "gpt-4o-2024-11-20",
+      model: "gpt-4o-mini-2024-07-18",
       messages: [{ role: "user", content: contextPrompt }],
       response_format: zodResponseFormat(contextAnalysisSchema, "output"),
     });

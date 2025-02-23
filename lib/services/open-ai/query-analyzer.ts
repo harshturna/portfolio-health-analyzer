@@ -16,7 +16,7 @@ export async function analyzeQuery(
     );
 
     const completion = await openai.beta.chat.completions.parse({
-      model: "gpt-4o-2024-11-20",
+      model: "gpt-4o-mini-2024-07-18",
       messages: [
         {
           role: "user",
@@ -75,7 +75,7 @@ export async function processAnalyzedQuery(
 
     try {
       const completion = await openai.beta.chat.completions.parse({
-        model: "gpt-4o-2024-11-20",
+        model: "gpt-4o-mini-2024-07-18",
         messages: [{ role: "user", content: prompt }],
         response_format: zodResponseFormat(PROMPTS[promptKey].schema, "output"),
       });

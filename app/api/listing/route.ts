@@ -11,7 +11,6 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          type: "client",
           message: "missing required properties",
         },
         { status: 400 }
@@ -53,7 +52,6 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          type: "client",
           message: "Invalid ticker",
         },
         { status: 400 }
@@ -88,7 +86,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      type: "client",
       data: listingData,
     });
   } catch (error) {
@@ -96,7 +93,6 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         success: false,
-        type: "server",
         message:
           error instanceof Error ? error.message : "Internal server error",
       },

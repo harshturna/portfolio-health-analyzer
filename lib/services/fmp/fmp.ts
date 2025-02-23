@@ -78,12 +78,16 @@ function getTimeFrameParams(
 async function fetchFmpApi(endpoint: string, params: string): Promise<any> {
   const url = `${FMP_API_BASE_URL}${endpoint}?apikey=${API_KEY}${params}`;
 
+  console.log("FMP_URL", url);
+
   const response = await fetch(url);
+  console.log("FMP_RESPONSE", response);
   if (!response.ok) {
     throw new Error(`API error: ${response.status} ${response.statusText}`);
   }
 
   const data = await response.json();
+  console.log("FMP_DATA", data);
   if (Array.isArray(data) && data.length === 0) {
     throw new Error("No data returned from API");
   }
