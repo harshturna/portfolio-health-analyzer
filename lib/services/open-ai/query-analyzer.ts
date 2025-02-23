@@ -15,6 +15,8 @@ export async function analyzeQuery(
       userQuery
     );
 
+    console.log("ANALYSIS_PROMPT", analysisPrompt);
+
     const completion = await openai.beta.chat.completions.parse({
       model: "gpt-4o-mini-2024-07-18",
       messages: [
@@ -37,6 +39,8 @@ export async function analyzeQuery(
           "I'm having trouble understanding your question. Could you please rephrase it or provide more details?",
       };
     }
+
+    console.log("AI_RESPONSE", completion.choices[0].message.parsed);
 
     return completion.choices[0].message.parsed;
   } catch (error) {

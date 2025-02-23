@@ -16,8 +16,6 @@ export async function processQueryWithData(
 
     const promptContent = generatePromptForData(queryResult, financialData);
 
-    console.log("PROMPT_CONTENT", promptContent);
-
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini-2024-07-18",
       messages: [
@@ -41,7 +39,7 @@ export async function processQueryWithData(
     );
   } catch (error) {
     console.error("Error processing query with data:", error);
-    return `I apologize, but I encountered an error while retrieving the financial information`;
+    return `I apologize, but I encountered an error while retrieving the financial information, Please try again or rephrase your question.`;
   }
 }
 

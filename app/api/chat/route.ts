@@ -1,4 +1,3 @@
-// src/pages/api/chat.ts
 import { NextResponse } from "next/server";
 import {
   handleUserQuery,
@@ -10,6 +9,8 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { messages, newMessage, isClarification } = body;
+
+    console.log({ messages, newMessage, isClarification });
 
     // Validate input
     if (!Array.isArray(messages) || !newMessage) {
@@ -46,7 +47,6 @@ export async function POST(req: Request) {
 
     // If it's a direct response to existing context
     if (!Array.isArray(result) && result.type === "direct_response") {
-      console.log("direct response");
       return NextResponse.json({
         success: true,
         message: result.message,

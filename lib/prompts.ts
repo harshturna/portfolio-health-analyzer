@@ -36,6 +36,9 @@ export const QUERY_PROMPTS = {
     3. A clarifying question if the confidence score is below 0.7 that would help determine the user's intent. If the score is above 0.7, leave it empty (clarifyQuestion)
      
     If the user's question clearly combines multiple query intents, include all relevant types in the queryTypes array. For example, a question asking both for financial data and executive statements should include both types.
+
+    Important: 
+    - If you cannot infer companies, executives, metrics from user's question, score it a low confidence and ask clarifying question
     
     Example classifications:
     - "What did Apple say in their last earnings call?" → ["TRANSCRIPT_SUMMARY"]

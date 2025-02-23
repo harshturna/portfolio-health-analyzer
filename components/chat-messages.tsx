@@ -1,6 +1,7 @@
 import React, { RefObject } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { TextLoop } from "./ui/text-loop";
 
 interface ChatMessagesProps {
   messages: {
@@ -8,9 +9,26 @@ interface ChatMessagesProps {
     content: string;
   }[];
   messagesEndRef: RefObject<HTMLDivElement | null>;
+  isLoading: boolean;
 }
 
-const ChatMessages = ({ messages, messagesEndRef }: ChatMessagesProps) => {
+const loopLoadingMessages = [
+  "Thinking deeply...",
+  "Processing your request...",
+  "Analyzing context...",
+  "Connecting the dots...",
+  "Contemplating possibilities...",
+  "Organizing thoughts...",
+  "Harmonizing ideas...",
+  "Mapping concepts...",
+  "Almost there...",
+];
+
+const ChatMessages = ({
+  messages,
+  messagesEndRef,
+  isLoading,
+}: ChatMessagesProps) => {
   return (
     <div className="space-y-4 max-h-[calc(100vh-300px)] rounded-md chat-messages">
       {messages.map((m, i) => (
@@ -31,6 +49,17 @@ const ChatMessages = ({ messages, messagesEndRef }: ChatMessagesProps) => {
           </div>
         </div>
       ))}
+      {isLoading ? (
+        <TextLoop interval={3}>
+          {loopLoadingMessages.map((message) => (
+            <span key={message} className="text-gray-400">
+              {message}
+            </span>
+          ))}
+        </TextLoop>
+      ) : (
+        ""
+      )}
       <div ref={messagesEndRef} />
     </div>
   );

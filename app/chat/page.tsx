@@ -13,6 +13,8 @@ export default function Chat() {
   const [newMessage, setNewMessage] = useState("");
   const [isClarification, setIsClarification] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const navTabs = [
     { name: "Home", link: "/" },
@@ -30,6 +32,8 @@ export default function Chat() {
   const sendMessage = async (messageContent: string) => {
     if (!messageContent.trim()) return;
 
+    setIsLoading(true);
+    setError(null);
     const currentMessages = [...messages];
     setNewMessage("");
     setMessages((prev) => [...prev, { role: "user", content: messageContent }]);
@@ -44,16 +48,24 @@ export default function Chat() {
           isClarification,
         }),
       });
-      const data = await res.json();
 
-      setIsClarification(data.clarification);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      setIsClarification(data.needsClarification);
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.message },
       ]);
     } catch (error) {
       console.error("Chat request failed:", error);
-      // Optionally add error handling UI here
+      setError("Failed to send message. Please try again.");
+      // Remove the last user message since the request failed
+      setMessages((prev) => prev.slice(0, -1));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -78,13 +90,22 @@ export default function Chat() {
               <ChatPlaceholder />
             </div>
           ) : (
-            <ChatMessages messages={messages} messagesEndRef={messagesEndRef} />
+            <ChatMessages
+              messages={messages}
+              messagesEndRef={messagesEndRef}
+              isLoading={isLoading}
+            />
           )}
         </div>
       </div>
 
       <div className="p-4 space-y-4">
         <div className="max-w-4xl mx-auto">
+          {error && (
+            <div className="mb-4 p-4 text-red-500 bg-red-50 rounded-lg">
+              {error}
+            </div>
+          )}
           {messages.length === 0 ? (
             <ChatQuestionCards
               questions={chatPlaceHolderQuestions}
@@ -97,12 +118,20 @@ export default function Chat() {
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Send a message..."
               className="w-full rounded-xl border border-gray-200 bg-white/70 p-4 pr-12 focus:outline-none focus:border-black"
+              disabled={isLoading}
             />
             <button
               type="submit"
-              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+              className={`absolute right-4 top-4 ${
+                isLoading
+                  ? "text-gray-300"
+                  : "text-gray-400 hover:text-gray-600"
+              }`}
+              disabled={isLoading}
             >
-              <CircleChevronRight className="w-5 h-5" />
+              <CircleChevronRight
+                className={`w-5 h-5 ${isLoading ? "animate-pulse" : ""}`}
+              />
             </button>
           </form>
         </div>
