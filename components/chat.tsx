@@ -19,6 +19,8 @@ interface ChatProps {
     title: string;
     description: string;
   }[];
+  headerDescription: string;
+  headerTitle: string;
 }
 
 export default function Chat({
@@ -29,6 +31,8 @@ export default function Chat({
   isLoading,
   error,
   placeHolderQuestions,
+  headerDescription,
+  headerTitle,
 }: ChatProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -55,15 +59,15 @@ export default function Chat({
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="m-4 md:mx-12">
-        <NavTabs tabs={navTabs} />
-      </div>
+    <div className="flex flex-col min-h-[90vh]">
       <div className="flex-1 overflow-auto p-8">
         <div className="w-full max-w-4xl mx-auto h-full">
           {messages.length === 0 ? (
             <div className="mt-2 md:mt-8">
-              <ChatPlaceholder />
+              <ChatPlaceholder
+                description={headerDescription}
+                title={headerTitle}
+              />
             </div>
           ) : (
             <ChatMessages

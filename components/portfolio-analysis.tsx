@@ -44,9 +44,6 @@ const PortfolioAnalysis = () => {
 
   return (
     <div className="p-4 lg:p-8">
-      <div className="ml-5 lg:ml-24">
-        <NavTabs tabs={navTabs} />
-      </div>
       <div className="flex-col lg:flex-row p-4 lg:p-8 pb-4 flex gap-4 flex-wrap justify-center">
         <div className="w-full lg:w-[30%]">
           <RiskScoreChart

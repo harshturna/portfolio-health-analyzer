@@ -12,9 +12,6 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { messages, newMessage, isClarification } = body;
 
-    console.log({ messages, newMessage, isClarification });
-
-    // Validate input
     if (!Array.isArray(messages) || !newMessage) {
       return NextResponse.json(
         { success: false, message: "Invalid request body" },

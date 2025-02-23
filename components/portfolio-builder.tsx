@@ -12,7 +12,7 @@ const PortfolioBuilder = () => {
 
   return (
     <div>
-      <h2 className="mt-12 mb-6 text-lg sm:text-xl md:text-2xl text-center font-medium">
+      <h2 className="mt-8 mb-6 text-lg sm:text-xl md:text-2xl text-center font-medium">
         Add your portfolio listings
       </h2>
       {listings.map((listing) => (

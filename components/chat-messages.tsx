@@ -4,10 +4,7 @@ import remarkGfm from "remark-gfm";
 import { TextLoop } from "./ui/text-loop";
 
 interface ChatMessagesProps {
-  messages: {
-    role: "user" | "assistant";
-    content: string;
-  }[];
+  messages: Message[];
   messagesEndRef: RefObject<HTMLDivElement | null>;
   isLoading: boolean;
 }

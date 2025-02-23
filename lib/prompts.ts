@@ -231,15 +231,14 @@ export const QUERY_PROMPTS = {
     Follow these strict guidelines:
     1. Identify the company name as mentioned in the user question or infer from executive names and topics mentioned in the user question - (take into consideration misspellings and variations of company names spellings)
     2. Infer the stock ticker symbol from the company name and topics (e.g., "Apple" → "AAPL", "Microsoft" → "MSFT")
-    3. If you cannot determine the ticker with absolute certainty, leave the ticker field empty
-    4. Extract the specific topic or metric to be analyzed (metric)
-    5. Determine if the request is for:
+    3. Extract the specific topic or metric to be analyzed (metric)
+    4. Determine if the request is for:
        - A point-in-time metric (e.g., "How many new subscribers did Netflix add last quarter?")
        - A trend analysis over time (e.g., "How has Netflix's subscriber growth changed over the past year?")
-    6. IMPORTANT: When interpreting relative time references, use the current date of ${
+    5. IMPORTANT: When interpreting relative time references, use the current date of ${
       currDateParams.currentDate
     } as reference
-    7. Determine the time span based on the question:
+    6. Determine the time span based on the question:
        - For a single point in time:
          - If "latest quarter" or "most recent quarter", use "latest_quarter"
          - If "previous quarter" or "last quarter", use "previous_quarter"
@@ -334,8 +333,32 @@ export const QUERY_PROMPTS = {
     Follow these strict guidelines:
     1. Identify the company names as mentioned in the user question or infer from executive names and topics (take into consideration misspellings and variations of company names spellings)
     2. Infer stock ticker symbols for well-known companies when you are 100% confident (e.g., "Apple" → "AAPL", "Microsoft" → "MSFT")
-    3. For company names where you cannot determine the ticker with absolute certainty, leave the ticker entry empty
-    4. Extract the specific financial metrics to compare (e.g., revenue growth, profit margin, EPS, debt-to-equity ratio)
+    3. Extract the specific financial metric(s) to compare by matching to these available metrics:
+
+ Income Statement Metrics:
+    ${IncomeStatementMetrics.join(", ")}
+
+    Balance Sheet Metrics:
+    ${BalanceSheetMetrics.join(", ")}
+
+    Cash Flow Metrics:
+    ${CashFlowMetrics.join(", ")}
+
+    Key Metrics:
+    ${KeyMetrics.join(", ")}
+
+    Ratios:
+    ${RatioMetrics.join(", ")}
+
+    IMPORTANT: Only use the exact metrics listed above. Map similar terms to these metrics:
+    - "profits" → "net income"
+    - "earnings" → "net income"
+    - "p/e" → "pe ratio"
+    - "margin" → "profit margin"
+    - "growth" → "revenue growth"
+    - "cash position" → "cash"
+    - "leverage" → "debt to equity"
+    - "profitability" → ["profit margin", "net income"]
     5. IMPORTANT: When interpreting relative time references, use the current date of ${
       currDateParams.currentDate
     } as reference
@@ -368,7 +391,7 @@ export const QUERY_PROMPTS = {
       companies: z.array(z.string()).describe("company names"),
       tickers: z.array(z.string()).describe("Stock ticker symbols"),
       metrics: z
-        .array(z.string())
+        .array(z.enum(AllMetrics))
         .describe("Specific financial metrics to compare"),
       timeFrame: timeFrameEnum.describe("Time period for the comparison"),
       specificPeriod: specificPeriodSchema
@@ -457,4 +480,16 @@ Include:
 
 Be conversational but include specific numbers and percentages to make the comparison clear.`,
   },
+};
+
+export const PORTFOLIO_ANALYZER = {
+  prompt: `You are a Portfolio Assistant AI analyzing the following investment portfolio.\n Your role is to provide clear, direct answers about portfolio composition, health, and metrics, highlighting important concerns like over-concentration or sector imbalances. You should not make specific buy/sell recommendations, provide tax advice, or predict market performance.
+When analyzing the portfolio, consider diversification across sectors, position sizes, concentration risks, and overall return metrics. Use straightforward language, include relevant numbers, and provide context for any metrics. If you encounter missing data or unclear queries, ask for clarification. Structure responses as "Summary → Key Details → Concerns (if any)".\n\n
+
+If the portfolio information is not available, ask user for relevant data
+
+Portfolio to analyze:
+{{PORTFOLIO}}
+
+`,
 };

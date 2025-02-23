@@ -1,18 +1,29 @@
 "use client";
 import Chat from "@/components/chat";
-import NavTabs from "@/components/ui/nav-tabs";
-import { chatPlaceHolderQuestions } from "@/lib/constants";
+import { portfolioPlaceholderQuestions } from "@/lib/constants";
 import { useState } from "react";
+import { useListings } from "@/store/use-listings";
+import { generatePortfolioSummary, injectValuesIntoPrompt } from "@/lib/utils";
+import { PORTFOLIO_ANALYZER } from "@/lib/prompts";
 
-const navTabs = [
-  { name: "Home", link: "/" },
-  { name: "Chat", link: "/chat" },
-];
+const PortfolioChat = () => {
+  const listings = useListings((store) => store.listings);
+  const portfolioSummary = generatePortfolioSummary(listings);
+  const listingsWithSummary = {
+    Listings: listings,
+    "Portfolio Summary": portfolioSummary,
+  };
 
-const AnalysisChat = () => {
+  let portfolioPrompt = PORTFOLIO_ANALYZER.prompt;
+
+  try {
+    portfolioPrompt = injectValuesIntoPrompt(portfolioPrompt, {
+      PORTFOLIO: JSON.stringify(listingsWithSummary),
+    });
+  } catch {}
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [isClarification, setIsClarification] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,13 +37,13 @@ const AnalysisChat = () => {
     setMessages((prev) => [...prev, { role: "user", content: messageContent }]);
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("/api/portfolio-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: currentMessages,
           newMessage: messageContent,
-          isClarification,
+          systemPrompt: portfolioPrompt,
         }),
       });
 
@@ -41,7 +52,6 @@ const AnalysisChat = () => {
       }
 
       const data = await res.json();
-      setIsClarification(data.needsClarification);
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.message },
@@ -56,10 +66,7 @@ const AnalysisChat = () => {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="m-4 md:mx-12">
-        <NavTabs tabs={navTabs} />
-      </div>
+    <>
       <Chat
         error={error}
         isLoading={isLoading}
@@ -67,14 +74,12 @@ const AnalysisChat = () => {
         newMessage={newMessage}
         sendMessage={sendMessage}
         setNewMessage={setNewMessage}
-        placeHolderQuestions={chatPlaceHolderQuestions}
-        headerTitle="Your AI financial companion"
-        headerDescription="Analyze stocks, summarize earnings calls, compare companies, and explore
-        financial metrics with AI-powered insights. Ask a question to get
-        started"
+        placeHolderQuestions={portfolioPlaceholderQuestions}
+        headerTitle="Your AI Portfolio Companion"
+        headerDescription="Get instant insights about your investment portfolio through AI analysis. Ask questions about your holdings, sector allocation, concentration risks, and overall portfolio health."
       />
-    </div>
+    </>
   );
 };
 
-export default AnalysisChat;
+export default PortfolioChat;

@@ -14,7 +14,7 @@ const ChatQuestionCards = ({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-8">
       {questions.map((question) => (
         <Button
-          key={question.title}
+          key={`${question.title}_${question.description}`}
           variant="ghost"
           className="h-auto p-4 text-left justify-start bg-white"
           onClick={() =>

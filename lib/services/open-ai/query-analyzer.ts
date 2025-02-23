@@ -15,8 +15,6 @@ export async function analyzeQuery(
       userQuery
     );
 
-    console.log("ANALYSIS_PROMPT", analysisPrompt);
-
     const completion = await openai.beta.chat.completions.parse({
       model: "gpt-4o-mini-2024-07-18",
       messages: [
@@ -72,7 +70,6 @@ export async function processAnalyzedQuery(
     };
   }
 
-  // Process all query types concurrently
   const queryPromises = analysis.queryTypes.map(async (queryType) => {
     const promptKey = queryType;
     const prompt = addUserQuestion(PROMPTS[promptKey].prompt, userInput);
@@ -103,6 +100,33 @@ export async function processAnalyzedQuery(
   const results = await Promise.all(queryPromises);
 
   return results.length === 1 ? results[0] : results;
+}
+
+export async function analyzeAndProcessPortfolioQuery(
+  systemPrompt: string,
+  messages: Message[]
+) {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4-turbo-preview",
+    messages: [
+      {
+        role: "system",
+        content: systemPrompt,
+      },
+      ...messages,
+    ],
+    temperature: 0.7,
+    presence_penalty: 0.6,
+    frequency_penalty: 0.3,
+  });
+
+  const response = completion.choices[0]?.message?.content;
+
+  if (!response) {
+    return "I ran into an error while processing the request, please try again.";
+  }
+
+  return response;
 }
 
 function createEmptyResult(

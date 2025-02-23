@@ -75,6 +75,28 @@ export const chatPlaceHolderQuestions: {
   },
 ];
 
+export const portfolioPlaceholderQuestions: {
+  title: string;
+  description: string;
+}[] = [
+  {
+    title: "Can you give me",
+    description: "a quick summary of my portfolio's current state?",
+  },
+  {
+    title: "What is my biggest ",
+    description: "concentration risk right now?",
+  },
+  {
+    title: "What sectors am",
+    description: "I missing entirely from my portfolio?",
+  },
+  {
+    title: "Am I too heavily",
+    description: "weighted in Technology compared to the S&P 500?",
+  },
+];
+
 export const IncomeStatementMetrics = [
   "revenue",
   "gross profit",
