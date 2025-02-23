@@ -23,7 +23,7 @@ export const processQueryWithData = async (
           content:
             "You are a financial analyst assistant that provides helpful, accurate, and concise information based on financial data and earnings transcripts.",
         },
-        ...messages.slice(-10),
+        ...messages.slice(-10), // keeping context short, could be increased
         {
           role: "user",
           content: promptContent,

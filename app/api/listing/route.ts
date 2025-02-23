@@ -17,15 +17,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const stockBaseUrl = process.env.STOCK_API_BASE_URL;
-    const token = process.env.STOCK_API_KEY;
+    const finnhubBaseUrl = "https://finnhub.io/api/v1/";
+    const apiKey = process.env.FINNHUB_API_KEY;
 
-    if (!stockBaseUrl || !token) {
+    if (!apiKey) {
       throw new Error("Missing API base URL or token.");
     }
 
-    const profileUrl = `${stockBaseUrl}/stock/profile2?symbol=${ticker}&token=${token}`;
-    const financialUrl = `${stockBaseUrl}/stock/metric?symbol=${ticker}&metric=all&token=${token}`;
+    const profileUrl = `${finnhubBaseUrl}/stock/profile2?symbol=${ticker}&token=${apiKey}`;
+    const financialUrl = `${finnhubBaseUrl}/stock/metric?symbol=${ticker}&metric=all&token=${apiKey}`;
 
     const [profileResponse, financialResponse] = await Promise.all([
       fetch(profileUrl),

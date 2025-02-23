@@ -12,7 +12,7 @@ import SectorAllocationChart from "@/components/sector-allocation-chart";
 import {
   calculatePortfolioRiskLevel,
   generatePortfolioSummary,
-} from "@/lib/utils";
+} from "@/lib/services/portfolio/portfolio";
 
 export default function PortfolioAnalysis() {
   const listings = useListings((store) => store.listings);

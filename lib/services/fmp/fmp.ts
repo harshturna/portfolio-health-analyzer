@@ -1,3 +1,4 @@
+import { getTimeFrameParams } from "@/lib/utils";
 import {
   BalanceSheetMetric,
   balanceSheetMetrics,
@@ -17,63 +18,6 @@ const API_KEY = process.env.FMP_API_KEY;
 if (!API_KEY) {
   console.warn("FMP_API_KEY is not defined in environment variables");
 }
-
-const getTimeFrameParams = (
-  timeFrame: TimeFrame,
-  specificPeriod?: SpecificPeriod
-): string => {
-  const params = new URLSearchParams();
-
-  switch (timeFrame) {
-    case "latest_quarter":
-      params.set("period", "quarter");
-      params.set("limit", "1");
-      break;
-    case "previous_quarter":
-      params.set("period", "quarter");
-      params.set("limit", "2");
-      break;
-    case "year_to_date":
-      params.set("period", "quarter");
-      params.set("from", `${new Date().getFullYear()}-01-01`);
-      break;
-    case "trailing_twelve_months":
-      params.set("period", "quarter");
-      params.set("limit", "4");
-      break;
-    case "specific_quarter":
-      if (specificPeriod?.quarter && specificPeriod?.year) {
-        params.set("period", "quarter");
-        params.set("year", specificPeriod.year.toString());
-        params.set("quarter", specificPeriod.quarter.toString());
-      }
-      break;
-    case "specific_year":
-      if (specificPeriod?.year) {
-        params.set("period", "annual");
-        params.set("year", specificPeriod.year.toString());
-      }
-      break;
-    case "specific_date_range":
-      if (specificPeriod?.startDate && specificPeriod?.endDate) {
-        params.set("from", specificPeriod.startDate);
-        params.set("to", specificPeriod.endDate);
-      }
-      break;
-    case "past_n_quarters":
-      params.set("period", "quarter");
-      params.set("limit", (specificPeriod?.count || 4).toString());
-      break;
-    case "past_n_years":
-      params.set("period", "annual");
-      params.set("limit", (specificPeriod?.count || 1).toString());
-      break;
-    default:
-      params.set("period", "quarter");
-      params.set("limit", "1");
-  }
-  return `&${params.toString()}`;
-};
 
 const fetchFmpApi = async (endpoint: string, params: string): Promise<any> => {
   const url = `${FMP_API_BASE_URL}${endpoint}?apikey=${API_KEY}${params}`;

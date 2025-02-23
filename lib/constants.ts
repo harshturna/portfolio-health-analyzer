@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { calculatePositionRiskLevel } from "@/lib/utils";
+import { calculatePositionRiskLevel } from "@/lib/services/portfolio/portfolio";
 
 export const LISTING_STATISTICS: StatisticItem[] = [
   {
