@@ -22,7 +22,7 @@ export default function NavTabs({ tabs }: NavTabsProps) {
           href={tab.link}
           className={cn(
             pathname === tab.link ? "bg-white" : "bg-gray-200",
-            "py-2 px-4 rounded-sm"
+            "py-2 px-4 rounded-sm text-sm md:text-base"
           )}
         >
           {tab.name}
