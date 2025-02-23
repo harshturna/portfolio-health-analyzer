@@ -38,7 +38,7 @@ npm install
 
 - OPENAI_API_KEY=your_key
 - FMP_API_KEY=your_key
-- FINNHUB*API_KEY=your_key # \_Only required for Portfolio features (can be omitted for Copilot)*
+- FINNHUB_API_KEY=your_key // Only required for Portfolio features (can be omitted for Copilot)
 
 3.  Run development server:
 
