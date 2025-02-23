@@ -27,35 +27,43 @@ export default function Chat() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSubmission = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const currMessages = [...messages];
-    const currNewMessage = newMessage;
+  const sendMessage = async (messageContent: string) => {
+    if (!messageContent.trim()) return;
+
+    const currentMessages = [...messages];
     setNewMessage("");
-    setMessages((prev) => [...prev, { role: "user", content: newMessage }]);
+    setMessages((prev) => [...prev, { role: "user", content: messageContent }]);
 
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: currMessages,
-          newMessage: currNewMessage,
+          messages: currentMessages,
+          newMessage: messageContent,
           isClarification,
         }),
       });
       const data = await res.json();
-      console.log(data);
 
       setIsClarification(data.clarification);
-
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.message },
       ]);
     } catch (error) {
-      console.log(error);
+      console.error("Chat request failed:", error);
+      // Optionally add error handling UI here
     }
+  };
+
+  const handleSubmission = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await sendMessage(newMessage);
+  };
+
+  const handleChatQuestionCard = async (question: string) => {
+    await sendMessage(question);
   };
 
   return (
@@ -78,7 +86,10 @@ export default function Chat() {
       <div className="p-4 space-y-4">
         <div className="max-w-4xl mx-auto">
           {messages.length === 0 ? (
-            <ChatQuestionCards questions={chatPlaceHolderQuestions} />
+            <ChatQuestionCards
+              questions={chatPlaceHolderQuestions}
+              handleQuestionClick={handleChatQuestionCard}
+            />
           ) : null}
           <form className="relative mt-4" onSubmit={handleSubmission}>
             <input

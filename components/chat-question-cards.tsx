@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 
 interface ChatQuestionProps {
   questions: { title: string; description: string }[];
+  handleQuestionClick: (question: string) => void;
 }
 
-const ChatQuestionCards = ({ questions }: ChatQuestionProps) => {
-  const handleQuestionClick = (question: string) => {};
-
+const ChatQuestionCards = ({
+  questions,
+  handleQuestionClick,
+}: ChatQuestionProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-8">
       {questions.map((question) => (

@@ -1,7 +1,11 @@
+import { ChartNoAxesColumnIncreasing } from "lucide-react";
 import Link from "next/link";
 
 const ChatPlaceholder = () => (
   <div className="text-center space-y-2">
+    <div className="flex justify-center">
+      <ChartNoAxesColumnIncreasing size={30} />
+    </div>
     <h2 className="text-2xl font-semibold">Your AI financial companion</h2>
     <div className="space-y-4 text-center max-w-lg mx-auto text-sm text-gray-600">
       <p>
