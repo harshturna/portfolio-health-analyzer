@@ -14,7 +14,7 @@
 
 ## Copilot Request Lifecycle
 
-![Copilot Request lifecycle](https://res.cloudinary.com/dlp6wui7r/image/upload/v1740342109/ecom/copilot-request-lifecycle_zan3qj.png)
+![Copilot Request lifecycle](https://res.cloudinary.com/dlp6wui7r/image/upload/v1740342782/ecom/request-lifecycle_xcrlgb.png)
 
 ## Tech Stack
 
@@ -38,7 +38,7 @@ npm install
 
 - OPENAI_API_KEY=your_key
 - FMP_API_KEY=your_key
-- FINNHUB_API_KEY=your_key # _Only required for Portfolio features (can be omitted for Copilot)_
+- FINNHUB*API_KEY=your_key # \_Only required for Portfolio features (can be omitted for Copilot)*
 
 3.  Run development server:
 
