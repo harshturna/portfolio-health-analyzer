@@ -1,12 +1,17 @@
-// src/lib/chat-handler.ts
-import { combineResponses, processQueryWithData } from "../integeration";
-import { analyzeContext } from "./context-analyzer";
-import { analyzeQuery, processAnalyzedQuery } from "./query-analyzer";
+import {
+  combineResponses,
+  processQueryWithData,
+} from "@/lib/services/integration";
+import { analyzeContext } from "@/lib/services/open-ai/context-analyzer";
+import {
+  analyzeQuery,
+  processAnalyzedQuery,
+} from "@/lib/services/open-ai/query-analyzer";
 
-export async function handleUserQuery(
+export const handleUserQuery = async (
   messages: Message[],
   newUserInput: string
-): Promise<ChatResponse> {
+): Promise<ChatResponse> => {
   const isInitialMessage = messages.length === 0;
 
   if (isInitialMessage) {
@@ -24,11 +29,11 @@ export async function handleUserQuery(
       return await processNewTopic(newUserInput);
     }
   }
-}
+};
 
-export async function processNewTopic(
+export const processNewTopic = async (
   userInput: string
-): Promise<ChatResponse> {
+): Promise<ChatResponse> => {
   const analysis = await analyzeQuery(userInput);
 
   if (analysis.confidenceScore < 0.7) {
@@ -40,23 +45,23 @@ export async function processNewTopic(
   }
 
   return await processAnalyzedQuery(analysis, userInput);
-}
+};
 
-export async function handleClarification(
+export const handleClarification = async (
   messages: Message[],
   clarificationResponse: string
-): Promise<ChatResponse> {
+): Promise<ChatResponse> => {
   const originalQuestion = messages[messages.length - 2].content;
 
   const enhancedQuestion = `${originalQuestion} (Additional info: ${clarificationResponse})`;
 
   return await processNewTopic(enhancedQuestion);
-}
+};
 
-export async function generateFinalResponse(
+export const generateFinalResponse = async (
   queryResults: QueryResult | QueryResult[],
   messages: Message[]
-): Promise<string> {
+): Promise<string> => {
   try {
     if (!Array.isArray(queryResults)) {
       return await processQueryWithData(queryResults, messages);
@@ -72,4 +77,4 @@ export async function generateFinalResponse(
     console.error("Error generating final response:", error);
     return "I apologize, but I encountered an error while processing your question. Please try again or rephrase your question.";
   }
-}
+};

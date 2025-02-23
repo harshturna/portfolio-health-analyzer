@@ -15,15 +15,19 @@ const navTabs = [
   },
 ];
 
-const CharactersLayout = ({ children }: { children: React.ReactNode }) => {
+export default function CharactersLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div>
-      <div className="ml-5 lg:ml-24 mt-4">
-        <NavTabs tabs={navTabs} />
+      <div className="ml-5 lg:ml-24">
+        <div className="pt-4">
+          <NavTabs tabs={navTabs} />
+        </div>
       </div>
       {children}
     </div>
   );
-};
-
-export default CharactersLayout;
+}

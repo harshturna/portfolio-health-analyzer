@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Button } from "@/components/ui/button";
 
 interface ChatQuestionProps {
@@ -6,10 +7,10 @@ interface ChatQuestionProps {
   handleQuestionClick: (question: string) => void;
 }
 
-const ChatQuestionCards = ({
+export default function ChatQuestionCards({
   questions,
   handleQuestionClick,
-}: ChatQuestionProps) => {
+}: ChatQuestionProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-8">
       {questions.map((question) => (
@@ -29,6 +30,4 @@ const ChatQuestionCards = ({
       ))}
     </div>
   );
-};
-
-export default ChatQuestionCards;
+}

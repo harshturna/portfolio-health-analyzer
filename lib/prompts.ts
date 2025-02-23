@@ -2,12 +2,12 @@ import { z } from "zod";
 
 import { getCurrentDateParams } from "@/lib/utils";
 import {
-  IncomeStatementMetrics,
-  BalanceSheetMetrics,
-  CashFlowMetrics,
-  KeyMetrics,
-  RatioMetrics,
-  AllMetrics,
+  incomeStatementMetrics,
+  balanceSheetMetrics,
+  cashFlowMetrics,
+  keyMetrics,
+  ratioMetrics,
+  allMetrics,
   timeFrameEnum,
   specificPeriodSchema,
 } from "@/lib/constants";
@@ -177,19 +177,19 @@ export const QUERY_PROMPTS = {
     3. Extract the specific financial metric(s) requested by matching to these available metrics:
 
  Income Statement Metrics:
-    ${IncomeStatementMetrics.join(", ")}
+    ${incomeStatementMetrics.join(", ")}
 
     Balance Sheet Metrics:
-    ${BalanceSheetMetrics.join(", ")}
+    ${balanceSheetMetrics.join(", ")}
 
     Cash Flow Metrics:
-    ${CashFlowMetrics.join(", ")}
+    ${cashFlowMetrics.join(", ")}
 
     Key Metrics:
-    ${KeyMetrics.join(", ")}
+    ${keyMetrics.join(", ")}
 
     Ratios:
-    ${RatioMetrics.join(", ")}
+    ${ratioMetrics.join(", ")}
 
     IMPORTANT: Only use the exact metrics listed above. Map similar terms to these metrics:
     - "profits" → "net income"
@@ -213,7 +213,7 @@ export const QUERY_PROMPTS = {
       company: z.string().describe("company name"),
       ticker: z.string().describe("Stock ticker symbol"),
       metrics: z
-        .array(z.enum(AllMetrics))
+        .array(z.enum(allMetrics))
         .describe("Specific financial metrics requested"),
       dataType: z
         .enum(["single_value", "time_series"])
@@ -336,19 +336,19 @@ export const QUERY_PROMPTS = {
     3. Extract the specific financial metric(s) to compare by matching to these available metrics:
 
  Income Statement Metrics:
-    ${IncomeStatementMetrics.join(", ")}
+    ${incomeStatementMetrics.join(", ")}
 
     Balance Sheet Metrics:
-    ${BalanceSheetMetrics.join(", ")}
+    ${balanceSheetMetrics.join(", ")}
 
     Cash Flow Metrics:
-    ${CashFlowMetrics.join(", ")}
+    ${cashFlowMetrics.join(", ")}
 
     Key Metrics:
-    ${KeyMetrics.join(", ")}
+    ${keyMetrics.join(", ")}
 
     Ratios:
-    ${RatioMetrics.join(", ")}
+    ${ratioMetrics.join(", ")}
 
     IMPORTANT: Only use the exact metrics listed above. Map similar terms to these metrics:
     - "profits" → "net income"
@@ -391,7 +391,7 @@ export const QUERY_PROMPTS = {
       companies: z.array(z.string()).describe("company names"),
       tickers: z.array(z.string()).describe("Stock ticker symbols"),
       metrics: z
-        .array(z.enum(AllMetrics))
+        .array(z.enum(allMetrics))
         .describe("Specific financial metrics to compare"),
       timeFrame: timeFrameEnum.describe("Time period for the comparison"),
       specificPeriod: specificPeriodSchema
@@ -480,6 +480,26 @@ Include:
 
 Be conversational but include specific numbers and percentages to make the comparison clear.`,
   },
+
+  FINALIZED_SUMMARY: {
+    prompt: `Answer the user's question based on the following financial data in markdown format with proper formatting:
+  Please ensure your response:
+- Uses proper header hierarchy (# for main titles, ## for subtitles)
+- Includes a blank line before and after headers, lists, and code blocks
+- Formats numbers consistently with appropriate decimal places
+- Employs emphasis (*italic* or **bold**) to highlight key insights
+- Breaks down complex information into readable paragraphs
+- Uses horizontal rules (---) to separate major sections when appropriate
+- Uses tables for structured financial data
+- Uses the following syntax for tables (include new lines)
+| Title 1 | Title 2  |\n  
+|--|--|\n
+| data 1 row 1 | data 2 row 1 |\n
+|data 1 row 2| data 2 row 2 |
+  
+  Financial data:
+  \n\n{{DATA_STRING}}\n\n`,
+  },
 };
 
 export const PORTFOLIO_ANALYZER = {
@@ -492,4 +512,49 @@ Portfolio to analyze:
 {{PORTFOLIO}}
 
 `,
+};
+
+export const CONTEXT_ANALYZER = {
+  prompt: `You are a financial context analyzer that directly answers follow-up questions when you have the required financial context.
+
+Given the conversation history and the latest question:
+
+1. First, identify any companies, tickers, or financial entities, topics mentioned in the latest question
+
+2. Check if the conversation history EXPLICITLY contains:
+   - Financial statements summary (Income Statement, Balance Sheet, Cash Flow)
+   - Key metrics summary (Revenue, Profit, Margins, etc.)
+   - Financial ratios discussion
+   - Earnings transcript summaries
+   - Detailed financial analysis
+   For the SPECIFIC companies/entities identified in step 1
+
+3. Rules:
+   - If isContinuation is true, you MUST provide a complete answer in directAnswer to Latest question, not just acknowledge you can answer
+   - Never respond with phrases like "I can do that" or "Certainly" - always give the actual answer
+   - If the question requires previously discussed data, use that data to answer immediately
+   - Must include specific numbers, metrics, and analysis in directAnswer when available
+   - Must be false if data needed isn't in conversation history
+   
+4. Example Good Response:
+   Question: "What was their revenue growth?"
+   BAD: "Certainly, I can tell you about the revenue growth."
+   GOOD: "Revenue grew by 23% year-over-year to $5.2B in Q4 2023, driven by..."
+
+Previous conversation:
+{{conversationHistory}}
+
+Latest question: "{{latestQuestion}}"
+
+If you have the required financial context, provide the complete answer immediately without acknowledgment phrases.`,
+  schema: z.object({
+    isContinuation: z
+      .boolean()
+      .describe("Whether this question continues the previous conversation"),
+    response: z
+      .string()
+      .describe(
+        "Direct response if this is a continuation, empty string if not"
+      ),
+  }),
 };

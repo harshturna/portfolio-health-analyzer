@@ -5,12 +5,12 @@ interface HoldingCardProps {
   variant: "success" | "warning" | "error";
 }
 
-const HoldingCard = ({
+export default function HoldingCard({
   value,
   description,
   holding,
   variant,
-}: HoldingCardProps) => {
+}: HoldingCardProps) {
   return (
     <div className="w-full md:w-[40%] lg:w-[32%] h-[200px] rounded-lg bg-white p-8 aspect">
       <div className="h-12">{holding}</div>
@@ -35,6 +35,4 @@ const HoldingCard = ({
       </div>
     </div>
   );
-};
-
-export default HoldingCard;
+}

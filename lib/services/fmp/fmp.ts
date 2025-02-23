@@ -1,14 +1,14 @@
 import {
   BalanceSheetMetric,
-  BalanceSheetMetrics,
+  balanceSheetMetrics,
   CashFlowMetric,
-  CashFlowMetrics,
+  cashFlowMetrics,
   IncomeStatementMetric,
-  IncomeStatementMetrics,
+  incomeStatementMetrics,
   KeyMetric,
-  KeyMetrics,
+  keyMetrics,
   RatioMetric,
-  RatioMetrics,
+  ratioMetrics,
 } from "@/lib/constants";
 
 const FMP_API_BASE_URL = "https://financialmodelingprep.com/api/v3";
@@ -18,10 +18,10 @@ if (!API_KEY) {
   console.warn("FMP_API_KEY is not defined in environment variables");
 }
 
-function getTimeFrameParams(
+const getTimeFrameParams = (
   timeFrame: TimeFrame,
   specificPeriod?: SpecificPeriod
-): string {
+): string => {
   const params = new URLSearchParams();
 
   switch (timeFrame) {
@@ -73,9 +73,9 @@ function getTimeFrameParams(
       params.set("limit", "1");
   }
   return `&${params.toString()}`;
-}
+};
 
-async function fetchFmpApi(endpoint: string, params: string): Promise<any> {
+const fetchFmpApi = async (endpoint: string, params: string): Promise<any> => {
   const url = `${FMP_API_BASE_URL}${endpoint}?apikey=${API_KEY}${params}`;
 
   const response = await fetch(url);
@@ -89,35 +89,35 @@ async function fetchFmpApi(endpoint: string, params: string): Promise<any> {
   }
 
   return data;
-}
+};
 
-function getRequiredStatements(metrics: string[]): string[] {
+const getRequiredStatements = (metrics: string[]): string[] => {
   const statements = new Set<string>();
 
   for (const metric of metrics) {
-    if (IncomeStatementMetrics.includes(metric as IncomeStatementMetric)) {
+    if (incomeStatementMetrics.includes(metric as IncomeStatementMetric)) {
       statements.add("income-statement");
     }
-    if (BalanceSheetMetrics.includes(metric as BalanceSheetMetric)) {
+    if (balanceSheetMetrics.includes(metric as BalanceSheetMetric)) {
       statements.add("balance-sheet-statement");
     }
-    if (CashFlowMetrics.includes(metric as CashFlowMetric)) {
+    if (cashFlowMetrics.includes(metric as CashFlowMetric)) {
       statements.add("cash-flow-statement");
     }
-    if (KeyMetrics.includes(metric as KeyMetric)) {
+    if (keyMetrics.includes(metric as KeyMetric)) {
       statements.add("key-metrics");
     }
-    if (RatioMetrics.includes(metric as RatioMetric)) {
+    if (ratioMetrics.includes(metric as RatioMetric)) {
       statements.add("ratios");
     }
   }
 
   return Array.from(statements);
-}
+};
 
-export async function fetchDataForQuery(
+export const fetchDataForQuery = async (
   queryResult: QueryResult
-): Promise<any> {
+): Promise<any> => {
   if (queryResult.error) {
     throw new Error(
       `Cannot fetch data for query with error: ${queryResult.error}`
@@ -140,11 +140,11 @@ export async function fetchDataForQuery(
     default:
       throw new Error(`Unsupported query type: ${(queryResult as any).type}`);
   }
-}
+};
 
-async function fetchTranscriptSummary(
+const fetchTranscriptSummary = async (
   data: TranscriptSummaryData
-): Promise<any> {
+): Promise<any> => {
   const { ticker, timeFrame, specificPeriod } = data;
   if (!ticker) throw new Error("Ticker required");
 
@@ -155,11 +155,11 @@ async function fetchTranscriptSummary(
   return timeFrame === "previous_quarter" && transcripts.length > 1
     ? transcripts[1]
     : transcripts;
-}
+};
 
-async function fetchExecutiveStatements(
+const fetchExecutiveStatements = async (
   data: ExecutiveStatementsData
-): Promise<any> {
+): Promise<any> => {
   const { tickers, executives, topics, timeFrame, specificPeriod } = data;
   if (!tickers?.length) throw new Error("At least one ticker required");
 
@@ -174,9 +174,11 @@ async function fetchExecutiveStatements(
 
   const results = await Promise.all(fetchPromises);
   return Object.fromEntries(results);
-}
+};
 
-async function fetchFinancialData(data: FinancialDataQueryData): Promise<any> {
+const fetchFinancialData = async (
+  data: FinancialDataQueryData
+): Promise<any> => {
   const { ticker, metrics, timeFrame, specificPeriod } = data;
   if (!ticker) throw new Error("Ticker required");
 
@@ -193,9 +195,9 @@ async function fetchFinancialData(data: FinancialDataQueryData): Promise<any> {
 
   const results = await Promise.all(fetchPromises);
   return Object.fromEntries(results);
-}
+};
 
-async function fetchMetricAnalysis(data: MetricAnalysisData): Promise<any> {
+const fetchMetricAnalysis = async (data: MetricAnalysisData): Promise<any> => {
   const { ticker, metric, timeFrame, specificPeriod } = data;
   if (!ticker) throw new Error("Ticker required");
 
@@ -215,11 +217,11 @@ async function fetchMetricAnalysis(data: MetricAnalysisData): Promise<any> {
 
   const results = await Promise.all(fetchPromises);
   return Object.fromEntries(results);
-}
+};
 
-async function fetchTranscriptComparison(
+const fetchTranscriptComparison = async (
   data: TranscriptComparisonData
-): Promise<any> {
+): Promise<any> => {
   const { tickers, comparisonTopic, timeFrame, specificPeriod } = data;
   if (!tickers?.length) throw new Error("At least one ticker required");
 
@@ -234,9 +236,11 @@ async function fetchTranscriptComparison(
 
   const results = await Promise.all(fetchPromises);
   return Object.fromEntries(results);
-}
+};
 
-async function fetchMetricComparison(data: MetricComparisonData): Promise<any> {
+const fetchMetricComparison = async (
+  data: MetricComparisonData
+): Promise<any> => {
   const { tickers, metrics, timeFrame, specificPeriod } = data;
   if (!tickers?.length) throw new Error("At least one ticker required");
 
@@ -258,4 +262,4 @@ async function fetchMetricComparison(data: MetricComparisonData): Promise<any> {
 
   const results = await Promise.all(fetchPromises);
   return Object.fromEntries(results);
-}
+};

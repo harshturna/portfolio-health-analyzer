@@ -11,7 +11,7 @@ interface NavTabsProps {
   }[];
 }
 
-const NavTabs = ({ tabs }: NavTabsProps) => {
+export default function NavTabs({ tabs }: NavTabsProps) {
   const pathname = usePathname();
 
   return (
@@ -30,6 +30,4 @@ const NavTabs = ({ tabs }: NavTabsProps) => {
       ))}
     </div>
   );
-};
-
-export default NavTabs;
+}

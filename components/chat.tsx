@@ -1,9 +1,9 @@
 "use client";
 
 import { FormEvent, useEffect, useRef } from "react";
-import { CircleChevronRight } from "lucide-react";
+import { CircleChevronRight, Plus } from "lucide-react";
 
-import NavTabs from "@/components/ui/nav-tabs";
+import { Button } from "@/components/ui/button";
 import ChatMessages from "@/components/chat-messages";
 import ChatPlaceholder from "@/components/chat-placeholder";
 import ChatQuestionCards from "@/components/chat-question-cards";
@@ -36,11 +36,6 @@ export default function Chat({
 }: ChatProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const navTabs = [
-    { name: "Home", link: "/" },
-    { name: "Chat", link: "/chat" },
-  ];
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -60,6 +55,18 @@ export default function Chat({
 
   return (
     <div className="flex flex-col min-h-[90vh]">
+      <div className="mr-4 lg:mr-12 flex justify-end">
+        {messages.length ? (
+          <Button
+            variant="outline"
+            className="bg-white"
+            onClick={() => window.location.reload()}
+          >
+            New Chat
+            <Plus />
+          </Button>
+        ) : null}
+      </div>
       <div className="flex-1 overflow-auto p-8">
         <div className="w-full max-w-4xl mx-auto h-full">
           {messages.length === 0 ? (

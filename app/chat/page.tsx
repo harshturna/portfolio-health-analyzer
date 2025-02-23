@@ -9,7 +9,7 @@ const navTabs = [
   { name: "Chat", link: "/chat" },
 ];
 
-const AnalysisChat = () => {
+export default function AnalysisChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [isClarification, setIsClarification] = useState(false);
@@ -57,7 +57,7 @@ const AnalysisChat = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="m-4 md:mx-12">
+      <div className="p-4 md:mx-12">
         <NavTabs tabs={navTabs} />
       </div>
       <Chat
@@ -75,6 +75,4 @@ const AnalysisChat = () => {
       />
     </div>
   );
-};
-
-export default AnalysisChat;
+}

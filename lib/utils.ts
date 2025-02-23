@@ -12,31 +12,29 @@ export const isObjectEmpty = (obj: object) => {
   return true;
 };
 
-export function injectValuesIntoPrompt(
+export const injectValuesIntoPrompt = (
   promptTemplate: string,
   values: Record<string, string | number>
-): string {
+): string => {
   return Object.entries(values).reduce((prompt, [key, value]) => {
     const placeholder = new RegExp(`\\{{${key}\\}}`, "g");
     return prompt.replace(placeholder, String(value));
   }, promptTemplate);
-}
+};
 
-export function addUserQuestion(
+export const addUserQuestion = (
   promptTemplate: string,
   userQuestion: string
-): string {
-  return injectValuesIntoPrompt(promptTemplate, { userQuestion });
-}
+): string => injectValuesIntoPrompt(promptTemplate, { userQuestion });
 
-export function getCurrentDateParams() {
+export const getCurrentDateParams = () => {
   const now = new Date();
   return {
     currentDate: now.toISOString().split("T")[0],
     currentYear: now.getFullYear(),
     currentQuarter: Math.floor(now.getMonth() / 3) + 1,
   };
-}
+};
 
 export const calculateCurrentPrice = (listing: Listing): number =>
   listing.marketCapitalization / listing.shareOutstanding;

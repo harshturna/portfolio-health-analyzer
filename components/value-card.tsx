@@ -6,7 +6,11 @@ interface ValueCardProps {
   icon: LucideIcon;
 }
 
-const ValueCard = ({ value, description, icon: Icon }: ValueCardProps) => {
+export default function ValueCard({
+  value,
+  description,
+  icon: Icon,
+}: ValueCardProps) {
   return (
     <div className="w-full md:w-[32%] h-[200px] rounded-lg bg-white p-8 aspect">
       <div className="h-12">
@@ -23,6 +27,4 @@ const ValueCard = ({ value, description, icon: Icon }: ValueCardProps) => {
       </div>
     </div>
   );
-};
-
-export default ValueCard;
+}

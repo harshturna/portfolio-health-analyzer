@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { calculatePositionRiskLevel } from "./utils";
+import { calculatePositionRiskLevel } from "@/lib/utils";
 
 export const LISTING_STATISTICS: StatisticItem[] = [
   {
@@ -70,8 +70,9 @@ export const chatPlaceHolderQuestions: {
     description: "top 3 cloud providers on their security investments",
   },
   {
-    title: "How Profitable",
-    description: "was Amazon last year compared to Walmart?",
+    title: "What are",
+    description:
+      "Mark Zuckerberg's and Satya Nadella's recent comments about AI?",
   },
 ];
 
@@ -97,7 +98,7 @@ export const portfolioPlaceholderQuestions: {
   },
 ];
 
-export const IncomeStatementMetrics = [
+export const incomeStatementMetrics = [
   "revenue",
   "gross profit",
   "net income",
@@ -111,7 +112,7 @@ export const IncomeStatementMetrics = [
   "sales",
 ] as const;
 
-export const BalanceSheetMetrics = [
+export const balanceSheetMetrics = [
   "assets",
   "liabilities",
   "equity",
@@ -124,7 +125,7 @@ export const BalanceSheetMetrics = [
   "accounts payable",
 ] as const;
 
-export const CashFlowMetrics = [
+export const cashFlowMetrics = [
   "operating cash flow",
   "free cash flow",
   "capital expenditure",
@@ -133,7 +134,7 @@ export const CashFlowMetrics = [
   "cash flow from financing",
 ] as const;
 
-export const KeyMetrics = [
+export const keyMetrics = [
   "pe ratio",
   "price to earnings",
   "pb ratio",
@@ -146,7 +147,7 @@ export const KeyMetrics = [
   "roa",
 ] as const;
 
-export const RatioMetrics = [
+export const ratioMetrics = [
   "current ratio",
   "quick ratio",
   "debt ratio",
@@ -157,11 +158,11 @@ export const RatioMetrics = [
   "profit margin",
 ] as const;
 
-export type IncomeStatementMetric = (typeof IncomeStatementMetrics)[number];
-export type BalanceSheetMetric = (typeof BalanceSheetMetrics)[number];
-export type CashFlowMetric = (typeof CashFlowMetrics)[number];
-export type KeyMetric = (typeof KeyMetrics)[number];
-export type RatioMetric = (typeof RatioMetrics)[number];
+export type IncomeStatementMetric = (typeof incomeStatementMetrics)[number];
+export type BalanceSheetMetric = (typeof balanceSheetMetrics)[number];
+export type CashFlowMetric = (typeof cashFlowMetrics)[number];
+export type KeyMetric = (typeof keyMetrics)[number];
+export type RatioMetric = (typeof ratioMetrics)[number];
 
 export type FinancialMetric =
   | IncomeStatementMetric
@@ -170,12 +171,12 @@ export type FinancialMetric =
   | KeyMetric
   | RatioMetric;
 
-export const AllMetrics = [
-  ...IncomeStatementMetrics,
-  ...BalanceSheetMetrics,
-  ...CashFlowMetrics,
-  ...KeyMetrics,
-  ...RatioMetrics,
+export const allMetrics = [
+  ...incomeStatementMetrics,
+  ...balanceSheetMetrics,
+  ...cashFlowMetrics,
+  ...keyMetrics,
+  ...ratioMetrics,
 ] as const;
 
 export const timeFrameEnum = z.enum([
@@ -192,7 +193,7 @@ export const timeFrameEnum = z.enum([
 ]);
 
 export const specificPeriodSchema = z.object({
-  quarter: z.number().optional().describe("Quarter (1 or 2 or 3 or 4)"),
+  quarter: z.number().optional().describe("Quarter (1, 2, 3 or 4)"),
   year: z.number().optional(),
   startDate: z.string().optional().describe("Start date in YYYY-MM-DD format"),
   endDate: z.string().optional().describe("End date in YYYY-MM-DD format"),

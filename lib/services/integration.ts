@@ -1,16 +1,15 @@
-// src/lib/services/integration-service.ts
-
 import OpenAI from "openai";
+
+import { SUMMARY_PROMPTS } from "@/lib/prompts";
+import { injectValuesIntoPrompt } from "@/lib/utils";
 import { fetchDataForQuery } from "@/lib/services/fmp/fmp";
-import { SUMMARY_PROMPTS } from "../prompts";
-import { injectValuesIntoPrompt } from "../utils";
 
 const openai = new OpenAI();
 
-export async function processQueryWithData(
+export const processQueryWithData = async (
   queryResult: QueryResult,
   messages: Message[]
-): Promise<string> {
+): Promise<string> => {
   try {
     const financialData = await fetchDataForQuery(queryResult);
 
@@ -41,37 +40,27 @@ export async function processQueryWithData(
     console.error("Error processing query with data:", error);
     return `I apologize, but I encountered an error while retrieving the financial information, Please try again or rephrase your question.`;
   }
-}
+};
 
-export function combineResponses(responses: string[]): string {
+export const combineResponses = (responses: string[]): string => {
   if (responses.length === 0) return "No information could be found.";
   if (responses.length === 1) return responses[0];
 
   return responses.join("\n\n");
-}
+};
 
-function generatePromptForData(
+const generatePromptForData = (
   queryResult: QueryResult,
   financialData: any
-): string {
+): string => {
   const dataString = JSON.stringify(financialData, null, 2);
-  const basePrompt = `Answer the user's question based on the following financial data in markdown format with proper formatting:
-  Please ensure your response:
-- Uses proper header hierarchy (# for main titles, ## for subtitles)
-- Includes a blank line before and after headers, lists, and code blocks
-- Formats numbers consistently with appropriate decimal places
-- Employs emphasis (*italic* or **bold**) to highlight key insights
-- Breaks down complex information into readable paragraphs
-- Uses horizontal rules (---) to separate major sections when appropriate
-- Uses tables for structured financial data
-- Uses the following syntax for tables (include new lines)
-| Title 1 | Title 2  |\n  
-|--|--|\n
-| data 1 row 1 | data 2 row 1 |\n
-|data 1 row 2| data 2 row 2 |
-  
-  Financial data:
-  \n\n${dataString}\n\n`;
+
+  const basePrompt = injectValuesIntoPrompt(
+    SUMMARY_PROMPTS.FINALIZED_SUMMARY.prompt,
+    {
+      DATA_STRING: dataString,
+    }
+  );
 
   switch (queryResult.type) {
     case "TRANSCRIPT_SUMMARY":
@@ -98,62 +87,47 @@ function generatePromptForData(
         "Please analyze this financial data and provide a comprehensive answer."
       );
   }
-}
+};
 
-function generateTranscriptSummaryPrompt(data: TranscriptSummaryData): string {
-  return injectValuesIntoPrompt(SUMMARY_PROMPTS.TRANSCRIPT_SUMMARY.prompt, {
+const generateTranscriptSummaryPrompt = (data: TranscriptSummaryData): string =>
+  injectValuesIntoPrompt(SUMMARY_PROMPTS.TRANSCRIPT_SUMMARY.prompt, {
     COMPANY: data.company,
     TICKER: data.ticker,
   });
-}
 
-function generateExecutiveStatementsPrompt(
+const generateExecutiveStatementsPrompt = (
   data: ExecutiveStatementsData
-): string {
-  return injectValuesIntoPrompt(SUMMARY_PROMPTS.EXECUTIVE_SUMMARY.prompt, {
+): string =>
+  injectValuesIntoPrompt(SUMMARY_PROMPTS.EXECUTIVE_SUMMARY.prompt, {
     EXECUTIVE_LIST: data.executives.join(", "),
     COMPANIES: data.companies.join(", "),
     TOPICS: data.topics.join(", "),
   });
-}
 
-function generateFinancialDataPrompt(data: FinancialDataQueryData): string {
-  return injectValuesIntoPrompt(SUMMARY_PROMPTS.FINANCIAL_DATA_SUMMARY.prompt, {
+const generateFinancialDataPrompt = (data: FinancialDataQueryData): string =>
+  injectValuesIntoPrompt(SUMMARY_PROMPTS.FINANCIAL_DATA_SUMMARY.prompt, {
     COMPANY: data.company,
     TICKER: data.ticker,
     METRICS: data.metrics.join(", "),
   });
-}
 
-function generateMetricAnalysisPrompt(data: MetricAnalysisData): string {
-  return injectValuesIntoPrompt(
-    SUMMARY_PROMPTS.METRIC_ANALYSIS_SUMMARY.prompt,
-    {
-      COMPANY: data.company,
-      TICKER: data.ticker,
-      METRIC: data.metric,
-    }
-  );
-}
+const generateMetricAnalysisPrompt = (data: MetricAnalysisData): string =>
+  injectValuesIntoPrompt(SUMMARY_PROMPTS.METRIC_ANALYSIS_SUMMARY.prompt, {
+    COMPANY: data.company,
+    TICKER: data.ticker,
+    METRIC: data.metric,
+  });
 
-function generateTranscriptComparisonPrompt(
+const generateTranscriptComparisonPrompt = (
   data: TranscriptComparisonData
-): string {
-  return injectValuesIntoPrompt(
-    SUMMARY_PROMPTS.TRANSCRIPT_COMPARISON_SUMMARY.prompt,
-    {
-      TOPIC: data.comparisonTopic,
-      COMPANIES: data.companies.join(", "),
-    }
-  );
-}
+): string =>
+  injectValuesIntoPrompt(SUMMARY_PROMPTS.TRANSCRIPT_COMPARISON_SUMMARY.prompt, {
+    TOPIC: data.comparisonTopic,
+    COMPANIES: data.companies.join(", "),
+  });
 
-function generateMetricComparisonPrompt(data: MetricComparisonData): string {
-  return injectValuesIntoPrompt(
-    SUMMARY_PROMPTS.METRIC_COMPARISON_SUMMARY.prompt,
-    {
-      METRICS: data.metrics.join(", "),
-      COMPANIES: data.companies.join(", "),
-    }
-  );
-}
+const generateMetricComparisonPrompt = (data: MetricComparisonData): string =>
+  injectValuesIntoPrompt(SUMMARY_PROMPTS.METRIC_COMPARISON_SUMMARY.prompt, {
+    METRICS: data.metrics.join(", "),
+    COMPANIES: data.companies.join(", "),
+  });

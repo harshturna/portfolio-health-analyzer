@@ -7,7 +7,7 @@ interface MetricsCardProps {
   }[];
 }
 
-const MetricsCard = ({ metrics }: MetricsCardProps) => {
+export default function MetricsCard({ metrics }: MetricsCardProps) {
   return (
     <div>
       <Card className="border-none  md:h-[210px]">
@@ -29,6 +29,4 @@ const MetricsCard = ({ metrics }: MetricsCardProps) => {
       </Card>
     </div>
   );
-};
-
-export default MetricsCard;
+}

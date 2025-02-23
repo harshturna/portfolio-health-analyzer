@@ -1,7 +1,8 @@
 import React, { RefObject } from "react";
-import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { TextLoop } from "./ui/text-loop";
+import ReactMarkdown from "react-markdown";
+
+import TextLoop from "@/components/ui/text-loop";
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -21,11 +22,11 @@ const loopLoadingMessages = [
   "Almost there...",
 ];
 
-const ChatMessages = ({
+export default function ChatMessages({
   messages,
   messagesEndRef,
   isLoading,
-}: ChatMessagesProps) => {
+}: ChatMessagesProps) {
   return (
     <div className="space-y-4 max-h-[calc(100vh-300px)] rounded-md chat-messages">
       {messages.map((m, i) => (
@@ -60,6 +61,4 @@ const ChatMessages = ({
       <div ref={messagesEndRef} />
     </div>
   );
-};
-
-export default ChatMessages;
+}

@@ -20,7 +20,7 @@ export type TextLoopProps = {
   mode?: AnimatePresenceProps["mode"];
 };
 
-export function TextLoop({
+export default function TextLoop({
   children,
   className,
   interval = 2,

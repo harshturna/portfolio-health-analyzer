@@ -53,7 +53,7 @@ export async function POST(req: Request) {
       });
     }
 
-    // For other types (query results), generate a comprehensive answer
+    // For query results
     const finalAnswer = await generateFinalResponse(
       result as QueryResult | QueryResult[],
       [...messages, { role: "user", content: newMessage }]

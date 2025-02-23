@@ -1,4 +1,5 @@
 "use client";
+
 import Chat from "@/components/chat";
 import { portfolioPlaceholderQuestions } from "@/lib/constants";
 import { useState } from "react";
@@ -6,8 +7,22 @@ import { useListings } from "@/store/use-listings";
 import { generatePortfolioSummary, injectValuesIntoPrompt } from "@/lib/utils";
 import { PORTFOLIO_ANALYZER } from "@/lib/prompts";
 
-const PortfolioChat = () => {
+export default function PortfolioChat() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const listings = useListings((store) => store.listings);
+
+  if (!listings.length) {
+    return (
+      <div className="text-center text-xl text-gray-400 flex items-center justify-center h-full w-full">
+        Add your portfolio listings to chat
+      </div>
+    );
+  }
+
   const portfolioSummary = generatePortfolioSummary(listings);
   const listingsWithSummary = {
     Listings: listings,
@@ -21,11 +36,6 @@ const PortfolioChat = () => {
       PORTFOLIO: JSON.stringify(listingsWithSummary),
     });
   } catch {}
-
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = async (messageContent: string) => {
     if (!messageContent.trim()) return;
@@ -80,6 +90,4 @@ const PortfolioChat = () => {
       />
     </>
   );
-};
-
-export default PortfolioChat;
+}

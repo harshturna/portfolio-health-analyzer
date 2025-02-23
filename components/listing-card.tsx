@@ -12,7 +12,7 @@ import {
   DisclosureTrigger,
 } from "@/components/ui/disclosure";
 
-const ListingCard = ({ listing }: { listing: Listing }) => {
+export default function ListingCard({ listing }: { listing: Listing }) {
   const deleteListing = useListings((state) => state.deleteListing);
 
   return (
@@ -80,6 +80,4 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
       </Button>
     </div>
   );
-};
-
-export default ListingCard;
+}

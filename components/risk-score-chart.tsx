@@ -10,7 +10,11 @@ import {
 const RISK_COLORS = ["#22c55e", "#facc15", "#ef4444"];
 const MAX_VALUE = 8;
 
-const RiskScoreChart = ({ riskFactors, riskLevel, riskScore }: RiskSummary) => {
+export default function RiskScoreChart({
+  riskFactors,
+  riskLevel,
+  riskScore,
+}: RiskSummary) {
   const riskColor =
     riskScore <= 2
       ? RISK_COLORS[0]
@@ -99,6 +103,4 @@ const RiskScoreChart = ({ riskFactors, riskLevel, riskScore }: RiskSummary) => {
       ) : null}
     </Card>
   );
-};
-
-export default RiskScoreChart;
+}

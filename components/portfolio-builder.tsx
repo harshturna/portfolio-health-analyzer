@@ -6,7 +6,7 @@ import { useListings } from "@/store/use-listings";
 import ListingCard from "@/components/listing-card";
 import AddHoldingPopover from "@/components/add-holding-popover";
 
-const PortfolioBuilder = () => {
+export default function PortfolioBuilder() {
   const listings = useListings((store) => store.listings);
   const router = useRouter();
 
@@ -30,6 +30,4 @@ const PortfolioBuilder = () => {
       </div>
     </div>
   );
-};
-
-export default PortfolioBuilder;
+}

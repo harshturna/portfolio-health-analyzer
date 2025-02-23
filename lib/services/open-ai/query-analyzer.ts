@@ -6,9 +6,9 @@ import { addUserQuestion } from "@/lib/utils";
 
 const openai = new OpenAI();
 
-export async function analyzeQuery(
+export const analyzeQuery = async (
   userQuery: string
-): Promise<QueryAnalysisResult> {
+): Promise<QueryAnalysisResult> => {
   try {
     const analysisPrompt = addUserQuestion(
       PROMPTS.FINANCIAL_ANALYZER.prompt,
@@ -38,8 +38,6 @@ export async function analyzeQuery(
       };
     }
 
-    console.log("AI_RESPONSE", completion.choices[0].message.parsed);
-
     return completion.choices[0].message.parsed;
   } catch (error) {
     console.error("Error analyzing query:", error);
@@ -50,12 +48,12 @@ export async function analyzeQuery(
         "I'm having trouble understanding your question. Could you please rephrase it or provide more details?",
     };
   }
-}
+};
 
-export async function processAnalyzedQuery(
+export const processAnalyzedQuery = async (
   analysis: QueryAnalysisResult,
   userInput: string
-): Promise<QueryResult | QueryResult[]> {
+): Promise<QueryResult | QueryResult[]> => {
   if (analysis.queryTypes.length === 0) {
     return {
       type: "EXECUTIVE_STATEMENTS",
@@ -100,12 +98,12 @@ export async function processAnalyzedQuery(
   const results = await Promise.all(queryPromises);
 
   return results.length === 1 ? results[0] : results;
-}
+};
 
-export async function analyzeAndProcessPortfolioQuery(
+export const analyzeAndProcessPortfolioQuery = async (
   systemPrompt: string,
   messages: Message[]
-) {
+) => {
   const completion = await openai.chat.completions.create({
     model: "gpt-4-turbo-preview",
     messages: [
@@ -127,12 +125,12 @@ export async function analyzeAndProcessPortfolioQuery(
   }
 
   return response;
-}
+};
 
-function createEmptyResult(
+const createEmptyResult = (
   queryType: QueryType,
   errorMessage: string
-): QueryResult {
+): QueryResult => {
   switch (queryType) {
     case "TRANSCRIPT_SUMMARY":
       return {
@@ -208,13 +206,13 @@ function createEmptyResult(
         error: errorMessage,
       };
   }
-}
+};
 
-function createResultForType(
+const createResultForType = (
   queryType: QueryType,
   data: any,
   error: string | null
-): QueryResult {
+): QueryResult => {
   switch (queryType) {
     case "TRANSCRIPT_SUMMARY":
       return {
@@ -258,4 +256,4 @@ function createResultForType(
         error,
       };
   }
-}
+};
