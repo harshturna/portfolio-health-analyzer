@@ -40,7 +40,7 @@ export default function CopilotButton({
   };
 
   return (
-    <Link href="/chat">
+    <Link href="/chat" className="mb-8 md:mb-0">
       <div
         className={cn(
           "group relative flex items-center justify-center w-[4.5rem] h-[4.5rem] border border-gray-300 rounded-[50%]"

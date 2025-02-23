@@ -10,7 +10,7 @@ const navTabs = [
     link: "/dashboard",
   },
   {
-    name: "Chat with your portfolio",
+    name: "AI Chat",
     link: "/dashboard/chat",
   },
 ];
