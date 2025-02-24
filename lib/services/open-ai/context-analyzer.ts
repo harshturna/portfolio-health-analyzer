@@ -27,7 +27,7 @@ export const analyzeContext = async (
     if (!completion.choices[0].message.parsed) {
       return {
         isContinuation: false,
-        response: "",
+        response: "I apologize, but I encountered an error while processing your question. Please try again or rephrase your question.",
       };
     }
 
@@ -36,7 +36,7 @@ export const analyzeContext = async (
     console.error("Error analyzing context:", error);
     return {
       isContinuation: false,
-      response: "",
+      response: "I apologize, but I encountered an error while processing your question. Please try again or rephrase your question.",
     };
   }
 };
