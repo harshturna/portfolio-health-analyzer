@@ -2,7 +2,6 @@
 
 **Copilot**: Chat with AI to analyze stocks, read earnings call summaries, compare companies, and track financial metrics.
 
-- Try it here: https://portfolio-analyzer.byharsh.com/chat
 
 **Portfolio Dashboard**: Add your stock holdings and get a clear view of your portfolio's health.
 
