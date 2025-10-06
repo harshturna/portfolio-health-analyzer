@@ -1,9 +1,3 @@
-# Portfolio Health Analyzer
-
-https://portfolio-analyzer.byharsh.com
-
-> _Part of a job application for https://finchat.io_
-
 ## Features
 
 **Copilot**: Chat with AI to analyze stocks, read earnings call summaries, compare companies, and track financial metrics.
